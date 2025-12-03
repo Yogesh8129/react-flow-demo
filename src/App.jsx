@@ -8,26 +8,23 @@ import ReactFlow, {
   MarkerType,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import "./App.css";
-import "./components/nodes.css";
 
 // Custom node types
-import BetNode from "./components/BetNode";
 import MetricNode from "./components/MetricNode";
+import BetNode from "./components/BetNode";
 
 // Register custom nodes - defined outside component to prevent re-renders
 const nodeTypes = {
-  betNode: BetNode,
   metricNode: MetricNode,
+  betNode: BetNode,
 };
 
-// Default edge style - dashed line matching the design
+// Default edge style - curved bezier line
 const defaultEdgeOptions = {
-  type: "smoothstep",
+  type: "default",
   style: {
     stroke: "#888",
     strokeWidth: 2,
-    strokeDasharray: "5,5",
   },
   markerEnd: {
     type: MarkerType.ArrowClosed,
@@ -35,68 +32,129 @@ const defaultEdgeOptions = {
   },
 };
 
-// Sample data matching the design screenshots
+// Pen Factory Workflow Data
 const initialNodes = [
   {
-    id: "1",
+    id: "raw-materials",
     type: "metricNode",
     position: { x: 100, y: 50 },
     data: {
-      title: "Seat expansion revenue",
-      tag: "Data science AI agent",
+      title: "Raw Materials Inventory",
+      tag: "Inventory Manager",
       metrics: [
-        { label: "Past 7 days", value: "$9.1K", change: "0.03%" },
-        { label: "Past 6 weeks", value: "$54.2K", change: "10.95%" },
-        { label: "Past 12 months", value: "$395.6K", change: "46.97%" },
+        { label: "Ink Cartridges", value: "12,450", change: "2.3%" },
+        { label: "Plastic Barrels", value: "8,200", change: "1.1%" },
+        { label: "Metal Tips", value: "15,800", change: "3.5%" },
       ],
     },
   },
   {
-    id: "2",
-    type: "betNode",
-    position: { x: 100, y: 420 },
+    id: "production",
+    type: "metricNode",
+    position: { x: 500, y: 50 },
     data: {
-      title: "Expand through seats added",
-      tag: "Bet ideator AI agent",
+      title: "Production Line Status",
+      tag: "Production Lead",
+      metrics: [
+        { label: "Daily Output", value: "2,400", change: "5.2%" },
+        { label: "Efficiency", value: "94.5%", change: "1.8%" },
+        { label: "Defect Rate", value: "0.8%", change: "-0.3%" },
+      ],
+    },
+  },
+  {
+    id: "quality",
+    type: "metricNode",
+    position: { x: 100, y: 400 },
+    data: {
+      title: "Quality Control",
+      tag: "QC Inspector",
+      metrics: [
+        { label: "Pass Rate", value: "99.2%", change: "0.4%" },
+        { label: "Tested Today", value: "2,380", change: "4.8%" },
+        { label: "Rejected", value: "19", change: "-12%" },
+      ],
+    },
+  },
+  {
+    id: "finished-goods",
+    type: "metricNode",
+    position: { x: 500, y: 400 },
+    data: {
+      title: "Finished Goods Inventory",
+      tag: "Warehouse Manager",
+      metrics: [
+        { label: "Ready to Ship", value: "45,200", change: "8.1%" },
+        { label: "Packed Today", value: "2,350", change: "5.0%" },
+        { label: "Pending Orders", value: "12,800", change: "15.2%" },
+      ],
+    },
+  },
+  {
+    id: "strategic-goal",
+    type: "betNode",
+    position: { x: 300, y: 720 },
+    data: {
+      title: "Increase production output by 20%",
+      tag: "Operations Director",
+      status: "In Progress",
     },
   },
 ];
 
-const initialEdges = [{ id: "e1-2", source: "1", target: "2" }];
+const initialEdges = [
+  { id: "e-raw-prod", source: "raw-materials", target: "production" },
+  { id: "e-prod-quality", source: "production", target: "quality" },
+  { id: "e-quality-finished", source: "quality", target: "finished-goods" },
+  { id: "e-finished-goal", source: "finished-goods", target: "strategic-goal" },
+];
 
 export default function FlowDemo() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
-  
+  // CRUD State
   const [nodeName, setNodeName] = useState("");
+  const [nodeType, setNodeType] = useState("betNode");
   const [selectedNode, setSelectedNode] = useState(null);
   const [updateLabel, setUpdateLabel] = useState("");
 
+  // Connect nodes
   const onConnect = useCallback(
     (connection) => setEdges((eds) => addEdge(connection, eds)),
     [setEdges]
   );
 
-  // CREATE: Add a new node (defaults to betNode type)
+  // CREATE: Add a new node
   const addNode = useCallback(() => {
     if (!nodeName.trim()) return;
+
     const newNode = {
       id: `node-${Date.now()}`,
-      type: "betNode",
-      position: { x: Math.random() * 300, y: Math.random() * 300 },
-      data: {
-        title: nodeName,
-        tag: "New agent",
-      },
+      type: nodeType,
+      position: { x: Math.random() * 400 + 100, y: Math.random() * 400 + 100 },
+      data:
+        nodeType === "betNode"
+          ? { title: nodeName, tag: "New Owner", status: "Active" }
+          : {
+              title: nodeName,
+              tag: "New Owner",
+              metrics: [
+                { label: "Metric 1", value: "0", change: "0%" },
+                { label: "Metric 2", value: "0", change: "0%" },
+                { label: "Metric 3", value: "0", change: "0%" },
+              ],
+            },
     };
+
     setNodes((nds) => [...nds, newNode]);
     setNodeName("");
-  }, [nodeName, setNodes]);
+  }, [nodeName, nodeType, setNodes]);
 
   // UPDATE: Update selected node's title
   const updateNodeTitle = useCallback(() => {
     if (!selectedNode || !updateLabel.trim()) return;
+
     setNodes((nds) =>
       nds.map((node) =>
         node.id === selectedNode.id
@@ -128,40 +186,69 @@ export default function FlowDemo() {
   }, []);
 
   return (
-    <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
-      {/* Control Panel */}
-      <div className="control-panel">
-        {/* CREATE: Add Node */}
-        <div className="section">
+    <div className="h-screen flex flex-col">
+      {/* Header */}
+      <div className="p-4 bg-gray-100 border-b border-gray-200">
+        <h1 className="text-xl font-bold text-gray-800">
+          Pen Factory - Production Workflow
+        </h1>
+        <p className="text-sm text-gray-500">
+          Real-time manufacturing metrics dashboard
+        </p>
+      </div>
+
+      {/* CRUD Control Panel */}
+      <div className="p-3 bg-white border-b border-gray-200 flex gap-4 items-center flex-wrap">
+        {/* CREATE */}
+        <div className="flex gap-2 items-center">
           <input
             type="text"
             value={nodeName}
             onChange={(e) => setNodeName(e.target.value)}
-            placeholder="Node label"
-            className="input"
+            placeholder="Node title"
+            className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
-          <button onClick={addNode} className="button">
+          <select
+            value={nodeType}
+            onChange={(e) => setNodeType(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+          >
+            <option value="betNode">Goal Node</option>
+            <option value="metricNode">Metric Node</option>
+          </select>
+          <button
+            onClick={addNode}
+            className="px-4 py-2 bg-purple-500 text-white rounded-md text-sm hover:bg-purple-600 transition-colors"
+          >
             Add Node
           </button>
         </div>
 
-        {/* DELETE: Remove Selected */}
-        <button onClick={deleteSelected} className="delete-button">
+        {/* DELETE */}
+        <button
+          onClick={deleteSelected}
+          className="px-4 py-2 bg-red-500 text-white rounded-md text-sm hover:bg-red-600 transition-colors"
+        >
           Delete Selected
         </button>
 
-        {/* UPDATE: Edit Selected Node */}
+        {/* UPDATE */}
         {selectedNode && (
-          <div className="section">
-            <span className="label">Editing: {selectedNode.data.title}</span>
+          <div className="flex gap-2 items-center border-l border-gray-300 pl-4">
+            <span className="text-sm text-gray-600">
+              Editing: <strong>{selectedNode.data.title}</strong>
+            </span>
             <input
               type="text"
               value={updateLabel}
               onChange={(e) => setUpdateLabel(e.target.value)}
               placeholder="New title"
-              className="input"
+              className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
-            <button onClick={updateNodeTitle} className="button">
+            <button
+              onClick={updateNodeTitle}
+              className="px-4 py-2 bg-purple-500 text-white rounded-md text-sm hover:bg-purple-600 transition-colors"
+            >
               Update
             </button>
           </div>
@@ -169,7 +256,7 @@ export default function FlowDemo() {
       </div>
 
       {/* React Flow Canvas */}
-      <div className="flow-container">
+      <div className="flex-1">
         <ReactFlow
           nodes={nodes}
           edges={edges}

@@ -1,84 +1,81 @@
-import NodeCard from "./NodeCard";
-
-/**
- * SVG Icons - inline to avoid extra dependencies
- */
-const Icons = {
-  chart: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M3 3v18h18" />
-      <path d="M18 17V9" />
-      <path d="M13 17V5" />
-      <path d="M8 17v-3" />
-    </svg>
-  ),
-  user: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-      <circle cx="12" cy="7" r="4" />
-    </svg>
-  ),
-  hand: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M18 11V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2" />
-      <path d="M14 10V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v6" />
-      <path d="M10 10.5V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v8" />
-      <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2a8 8 0 0 1-8-8" />
-    </svg>
-  ),
-  comment: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-    </svg>
-  ),
-  trendline: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M3 17l6-6 4 4L21 7" />
-    </svg>
-  ),
-};
+import { Handle, Position } from "reactflow";
+import {
+  BaseNode,
+  BaseNodeHeader,
+  BaseNodeContent,
+  BaseNodeFooter,
+} from "@/components/base-node";
+import {
+  User,
+  Hand,
+  MessageCircle,
+  TrendingUp,
+  BarChart3,
+  ChevronDown,
+  ExternalLink,
+} from "lucide-react";
 
 /**
  * MetricNode - "Metric / Input" type card for workflow
  *
  * Displays KPIs with time-based comparisons.
- * Expects data.metrics to be an array of { label, value, change } objects.
  */
 export default function MetricNode({ data }) {
-  const footer = (
-    <>
-      <div className="node-footer-icons">
-        {Icons.user}
-        {Icons.hand}
-        {Icons.comment}
-        {Icons.trendline}
-      </div>
-      <div className="node-dropdown">
-        Sum <span>▼</span>
-      </div>
-    </>
-  );
-
   return (
-    <NodeCard
-      icon={Icons.chart}
-      type="Metric / Input"
-      tag={data.tag}
-      footer={footer}
-      accentColor="#8b5cf6"
-    >
-      <h3 className="node-title">{data.title}</h3>
+    <BaseNode className="min-w-[280px] max-w-[320px] border-l-4 border-l-purple-500">
+      <Handle type="target" position={Position.Top} />
 
-      {/* Metric Grid */}
-      <div className="metric-grid">
-        {data.metrics.map((metric, index) => (
-          <div key={index} className="metric-item">
-            <div className="metric-label">{metric.label}</div>
-            <div className="metric-value">{metric.value}</div>
-            <div className="metric-change">{metric.change} ↗</div>
-          </div>
-        ))}
-      </div>
-    </NodeCard>
+      {/* Header */}
+      <BaseNodeHeader className="border-b border-gray-100">
+        <div className="flex items-center gap-1.5 text-purple-500 text-sm font-medium">
+          <BarChart3 className="w-4 h-4" />
+          <span>Metric / Input</span>
+          <ChevronDown className="w-3 h-3" />
+        </div>
+        <ExternalLink className="w-4 h-4 text-gray-400 cursor-pointer" />
+      </BaseNodeHeader>
+
+      {/* Content */}
+      <BaseNodeContent>
+        <h3 className="text-base font-semibold text-gray-900 mb-4">
+          {data.title}
+        </h3>
+
+        {/* Metrics Grid */}
+        <div className="grid grid-cols-3 gap-2 mb-4">
+          {data.metrics.map((metric, index) => (
+            <div key={index} className="text-left">
+              <div className="text-xs text-gray-500 mb-1">{metric.label}</div>
+              <div className="text-lg font-bold text-gray-900">{metric.value}</div>
+              <div className="text-sm text-green-500 flex items-center gap-0.5">
+                {metric.change} <TrendingUp className="w-3 h-3" />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Tag */}
+        <div className="inline-flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-600">
+          <span>{data.tag}</span>
+          <span className="text-gray-400 cursor-pointer">✕</span>
+        </div>
+      </BaseNodeContent>
+
+      {/* Footer */}
+      <BaseNodeFooter className="flex-row justify-between">
+        <div className="flex items-center gap-3 text-gray-400">
+          <User className="w-4 h-4 cursor-pointer hover:text-gray-600" />
+          <Hand className="w-4 h-4 cursor-pointer hover:text-gray-600" />
+          <MessageCircle className="w-4 h-4 cursor-pointer hover:text-gray-600" />
+          <TrendingUp className="w-4 h-4 cursor-pointer hover:text-gray-600" />
+        </div>
+        <div className="flex items-center gap-1 text-gray-500 text-sm">
+          Sum
+          <ChevronDown className="w-3 h-3" />
+        </div>
+      </BaseNodeFooter>
+
+      <Handle type="source" position={Position.Bottom} />
+    </BaseNode>
   );
 }

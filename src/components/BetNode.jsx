@@ -1,65 +1,57 @@
-import NodeCard from "./NodeCard";
+import { Handle, Position } from "reactflow";
+import {
+  BaseNode,
+  BaseNodeHeader,
+  BaseNodeContent,
+  BaseNodeFooter,
+} from "@/components/base-node";
+import { User, Hand, MessageCircle, ChevronDown, ExternalLink, Target } from "lucide-react";
 
 /**
- * SVG Icons - inline to avoid extra dependencies
- */
-const Icons = {
-  bet: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <circle cx="12" cy="12" r="10" />
-      <path d="M8 12h8M12 8v8" />
-    </svg>
-  ),
-  user: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-      <circle cx="12" cy="7" r="4" />
-    </svg>
-  ),
-  hand: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M18 11V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2" />
-      <path d="M14 10V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v6" />
-      <path d="M10 10.5V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v8" />
-      <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2a8 8 0 0 1-8-8" />
-    </svg>
-  ),
-  comment: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-    </svg>
-  ),
-};
-
-/**
- * BetNode - "Bet" type card for workflow
+ * BetNode - Strategic goal/bet card for workflow
  *
- * Displays a bet/hypothesis with status badge.
- * Data is passed via React Flow's `data` prop.
+ * Displays a strategic goal or hypothesis with status badge.
  */
 export default function BetNode({ data }) {
-  const footer = (
-    <>
-      <div className="node-footer-icons">
-        {Icons.user}
-        {Icons.hand}
-        {Icons.comment}
-      </div>
-      <div className="node-status-badge">
-        Active <span>▼</span>
-      </div>
-    </>
-  );
-
   return (
-    <NodeCard
-      icon={Icons.bet}
-      type="Bet"
-      tag={data.tag}
-      footer={footer}
-      accentColor="#8b5cf6"
-    >
-      <h3 className="node-title">{data.title}</h3>
-    </NodeCard>
+    <BaseNode className="min-w-[280px] max-w-[320px] border-l-4 border-l-purple-500">
+      <Handle type="target" position={Position.Top} />
+
+      {/* Header */}
+      <BaseNodeHeader className="border-b border-gray-100">
+        <div className="flex items-center gap-1.5 text-purple-500 text-sm font-medium">
+          <Target className="w-4 h-4" />
+          <span>Goal</span>
+          <ChevronDown className="w-3 h-3" />
+        </div>
+        <ExternalLink className="w-4 h-4 text-gray-400 cursor-pointer" />
+      </BaseNodeHeader>
+
+      {/* Content */}
+      <BaseNodeContent>
+        <h3 className="text-base font-semibold text-gray-900 mb-3">
+          {data.title}
+        </h3>
+        <div className="inline-flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-600">
+          <span>{data.tag}</span>
+          <span className="text-gray-400 cursor-pointer">✕</span>
+        </div>
+      </BaseNodeContent>
+
+      {/* Footer */}
+      <BaseNodeFooter className="flex-row justify-between">
+        <div className="flex items-center gap-3 text-gray-400">
+          <User className="w-4 h-4 cursor-pointer hover:text-gray-600" />
+          <Hand className="w-4 h-4 cursor-pointer hover:text-gray-600" />
+          <MessageCircle className="w-4 h-4 cursor-pointer hover:text-gray-600" />
+        </div>
+        <div className="flex items-center gap-1 px-3 py-1.5 bg-green-500 text-white rounded-md text-sm font-medium">
+          {data.status || "Active"}
+          <ChevronDown className="w-3 h-3" />
+        </div>
+      </BaseNodeFooter>
+
+      <Handle type="source" position={Position.Bottom} />
+    </BaseNode>
   );
 }
