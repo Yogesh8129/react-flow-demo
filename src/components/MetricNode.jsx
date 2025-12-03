@@ -1,10 +1,11 @@
-import { Handle, Position } from "reactflow";
+import { Position } from "reactflow";
 import {
   BaseNode,
   BaseNodeHeader,
   BaseNodeContent,
   BaseNodeFooter,
 } from "@/components/base-node";
+import { BaseHandle } from "@/components/base-handle";
 import {
   User,
   Hand,
@@ -19,11 +20,16 @@ import {
  * MetricNode - "Metric / Input" type card for workflow
  *
  * Displays KPIs with time-based comparisons.
+ * Handles on all 4 sides for flexible connections.
  */
 export default function MetricNode({ data }) {
   return (
     <BaseNode className="min-w-[280px] max-w-[320px] border-l-4 border-l-purple-500">
-      <Handle type="target" position={Position.Top} />
+      {/* Handles - All 4 sides for flexible connections */}
+      <BaseHandle id="top" type="target" position={Position.Top} />
+      <BaseHandle id="bottom" type="source" position={Position.Bottom} />
+      <BaseHandle id="left" type="target" position={Position.Left} />
+      <BaseHandle id="right" type="source" position={Position.Right} />
 
       {/* Header */}
       <BaseNodeHeader className="border-b border-gray-100">
@@ -74,8 +80,6 @@ export default function MetricNode({ data }) {
           <ChevronDown className="w-3 h-3" />
         </div>
       </BaseNodeFooter>
-
-      <Handle type="source" position={Position.Bottom} />
     </BaseNode>
   );
 }
