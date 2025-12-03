@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react";
 import ReactFlow, { Background, Controls, useNodesState, useEdgesState, addEdge } from "reactflow";
 import "reactflow/dist/style.css";
+import "./App.css";
 
 const initialNodes = [
   { id: "1", position: { x: 0, y: 0 }, data: { label: "Start" } },
@@ -12,51 +13,6 @@ const initialEdges = [
   { id: "e1-2", source: "1", target: "2", animated: true },
   { id: "e2-3", source: "2", target: "3" },
 ];
-
-const styles = {
-  controlPanel: {
-    padding: "10px",
-    background: "#f5f5f5",
-    borderBottom: "1px solid #ddd",
-    display: "flex",
-    gap: "20px",
-    alignItems: "center",
-    flexWrap: "wrap",
-  },
-  section: {
-    display: "flex",
-    gap: "8px",
-    alignItems: "center",
-  },
-  input: {
-    padding: "8px 12px",
-    border: "1px solid #ccc",
-    borderRadius: "4px",
-    fontSize: "14px",
-  },
-  button: {
-    padding: "8px 16px",
-    background: "#4a90d9",
-    color: "white",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-    fontSize: "14px",
-  },
-  deleteButton: {
-    padding: "8px 16px",
-    background: "#e74c3c",
-    color: "white",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-    fontSize: "14px",
-  },
-  label: {
-    fontWeight: "bold",
-    color: "#333",
-  },
-};
 
 export default function FlowDemo() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
@@ -120,38 +76,38 @@ export default function FlowDemo() {
   return (
     <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
       {/* Control Panel */}
-      <div style={styles.controlPanel}>
+      <div className="control-panel">
         {/* CREATE: Add Node */}
-        <div style={styles.section}>
+        <div className="section">
           <input
             type="text"
             value={nodeName}
             onChange={(e) => setNodeName(e.target.value)}
             placeholder="Node label"
-            style={styles.input}
+            className="input"
           />
-          <button onClick={addNode} style={styles.button}>
+          <button onClick={addNode} className="button">
             Add Node
           </button>
         </div>
 
         {/* DELETE: Remove Selected */}
-        <button onClick={deleteSelected} style={styles.deleteButton}>
+        <button onClick={deleteSelected} className="delete-button">
           Delete Selected
         </button>
 
         {/* UPDATE: Edit Selected Node */}
         {selectedNode && (
-          <div style={styles.section}>
-            <span style={styles.label}>Editing: {selectedNode.data.label}</span>
+          <div className="section">
+            <span className="label">Editing: {selectedNode.data.label}</span>
             <input
               type="text"
               value={updateLabel}
               onChange={(e) => setUpdateLabel(e.target.value)}
               placeholder="New label"
-              style={styles.input}
+              className="input"
             />
-            <button onClick={updateNodeLabel} style={styles.button}>
+            <button onClick={updateNodeLabel} className="button">
               Update
             </button>
           </div>
@@ -159,7 +115,7 @@ export default function FlowDemo() {
       </div>
 
       {/* React Flow Canvas */}
-      <div style={{ flex: 1 }}>
+      <div className="flow-container">
         <ReactFlow
           nodes={nodes}
           edges={edges}
