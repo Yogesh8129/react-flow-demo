@@ -11,7 +11,7 @@ import ReactFlow, {
   MarkerType,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import { ArrowLeft, Check, Pencil, Save, Power } from "lucide-react";
+import { ArrowLeft, Check, Pencil, Save, Power, Play } from "lucide-react";
 
 // New telemetry node components
 import DeviceSelectorNode from "../components/nodes/DeviceSelectorNode";
@@ -19,8 +19,10 @@ import RuleNode from "../components/nodes/RuleNode";
 import EmailActionNode from "../components/nodes/EmailActionNode";
 import SmsActionNode from "../components/nodes/SmsActionNode";
 
-// Form modal
+// Form modal and simulation
 import NodeFormModal from "../components/forms/NodeFormModal";
+import SimulationModal from "../components/SimulationModal";
+import useSimulation from "../hooks/useSimulation";
 
 // Constants and store
 import { NODE_TYPES, NODE_CONFIG, getDefaultNodeData } from "../constants/nodeConfig";
@@ -72,6 +74,16 @@ export default function WorkflowEditor() {
   const [editingNameValue, setEditingNameValue] = useState("");
   const [saveStatus, setSaveStatus] = useState("saved");
   const nameInputRef = useRef(null);
+
+  // Simulation
+  const {
+    isRunning: isSimulationRunning,
+    currentStep,
+    stepDetails,
+    progress,
+    runSimulation,
+    resetSimulation,
+  } = useSimulation();
 
   // Initialize from Redux when workflow loads (only once per id)
   useEffect(() => {
@@ -148,6 +160,18 @@ export default function WorkflowEditor() {
     if (!workflow) return;
     dispatch(toggleWorkflowEnabled(workflow.id));
   }, [workflow, dispatch]);
+
+  // Run simulation
+  const handleRunSimulation = useCallback(() => {
+    if (!workflow) return;
+    // Use current nodes from local state for simulation
+    const workflowWithCurrentNodes = {
+      ...workflow,
+      nodes,
+      edges,
+    };
+    runSimulation(workflowWithCurrentNodes);
+  }, [workflow, nodes, edges, runSimulation]);
 
   // Get display values
   const displayName = workflow?.name || "Untitled Workflow";
@@ -280,6 +304,16 @@ export default function WorkflowEditor() {
 
           {workflow && (
             <div className="flex items-center gap-3">
+              {/* Run Simulation button */}
+              <button
+                onClick={handleRunSimulation}
+                disabled={isSimulationRunning}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Play size={16} />
+                {isSimulationRunning ? "Running..." : "Run Simulation"}
+              </button>
+
               {/* Enabled toggle */}
               <button
                 onClick={handleToggleEnabled}
@@ -385,6 +419,15 @@ export default function WorkflowEditor() {
         nodeType={pendingNodeType}
         initialValues={modalInitialValues}
         onSubmit={handleModalSubmit}
+      />
+
+      {/* Simulation Modal */}
+      <SimulationModal
+        isOpen={isSimulationRunning}
+        onClose={resetSimulation}
+        currentStep={currentStep}
+        stepDetails={stepDetails}
+        progress={progress}
       />
     </div>
   );
