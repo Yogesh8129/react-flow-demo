@@ -4,128 +4,53 @@ const initialState = {
   items: [
     {
       id: "1",
-      name: "Pen Factory Workflow",
-      schedule: "Every 5 minutes",
-      lastRun: { status: "completed", time: "12 minutes ago" },
-      nextRun: "2024-12-09 15:15",
+      name: "Overheat Alert - Line A",
+      description: "Alert when temperature exceeds 80°C for 5 minutes",
+      enabled: true,
       nodes: [
         {
-          id: "init-1",
-          type: "initiativeNode",
-          position: { x: 50, y: 30 },
-          data: { title: "Optimize ink mixing process", timeEstimate: "4 hours", progress: 80 },
+          id: "device-1",
+          type: "deviceSelector",
+          position: { x: 100, y: 150 },
+          data: { tags: ["line:A", "zone:heating"] },
         },
         {
-          id: "init-2",
-          type: "initiativeNode",
-          position: { x: 50, y: 200 },
-          data: { title: "Upgrade assembly machines", timeEstimate: "8 hours", progress: 60 },
-        },
-        {
-          id: "init-3",
-          type: "initiativeNode",
-          position: { x: 50, y: 370 },
-          data: { title: "Install quality sensors", timeEstimate: "6 hours", progress: 40 },
-        },
-        {
-          id: "metric-rate",
-          type: "metricNode",
-          position: { x: 380, y: 30 },
+          id: "rule-1",
+          type: "rule",
+          position: { x: 400, y: 150 },
           data: {
-            title: "Production Rate",
-            tag: "Operations",
-            metrics: [
-              { label: "Per Hour", value: "142", change: "3.2%" },
-              { label: "Per Shift", value: "1,136", change: "2.8%" },
-              { label: "Per Day", value: "2,400", change: "5.1%" },
-            ],
+            parameter: "temperature",
+            comparator: ">",
+            threshold: 80,
+            duration_seconds: 300,
+            aggregation: "avg",
+            repeat_policy: { type: "rate_limit", interval_seconds: 600 },
           },
         },
         {
-          id: "metric-quality",
-          type: "metricNode",
-          position: { x: 380, y: 370 },
-          data: {
-            title: "Quality Score",
-            tag: "QC Team",
-            metrics: [
-              { label: "Pass Rate", value: "99.2%", change: "0.4%" },
-              { label: "Defect Rate", value: "0.8%", change: "-0.3%" },
-              { label: "Rework", value: "12", change: "-15%" },
-            ],
-          },
+          id: "email-1",
+          type: "emailAction",
+          position: { x: 700, y: 80 },
+          data: { recipients: ["ops@example.com"], template_id: "tmpl_overheat" },
         },
         {
-          id: "key-metric",
-          type: "keyMetricNode",
-          position: { x: 750, y: 180 },
-          data: {
-            title: "Daily Production Output",
-            tag: "Key Performance Driver",
-            metrics: [
-              { label: "Today", value: "2,400", change: "5.2%" },
-              { label: "This Week", value: "11,850", change: "4.1%" },
-              { label: "This Month", value: "48,200", change: "8.3%" },
-            ],
-          },
-        },
-        {
-          id: "outcome-inventory",
-          type: "metricNode",
-          position: { x: 1120, y: 30 },
-          data: {
-            title: "Finished Goods",
-            tag: "Warehouse",
-            metrics: [
-              { label: "In Stock", value: "45,200", change: "8.1%" },
-              { label: "Packed", value: "2,350", change: "5.0%" },
-              { label: "Pending", value: "12,800", change: "15.2%" },
-            ],
-          },
-        },
-        {
-          id: "outcome-revenue",
-          type: "metricNode",
-          position: { x: 1120, y: 370 },
-          data: {
-            title: "Revenue & Margin",
-            tag: "Finance",
-            metrics: [
-              { label: "Revenue", value: "$2.4M", change: "12.5%" },
-              { label: "Cost/Unit", value: "$0.12", change: "-3.2%" },
-              { label: "Margin", value: "34.5%", change: "2.1%" },
-            ],
-          },
-        },
-        {
-          id: "goal",
-          type: "betNode",
-          position: { x: 750, y: 520 },
-          data: {
-            title: "Increase production output by 20%",
-            tag: "Operations Director",
-            status: "In Progress",
-          },
+          id: "sms-1",
+          type: "smsAction",
+          position: { x: 700, y: 220 },
+          data: { recipients: ["+919876543210"], template_id: "tmpl_overheat_sms" },
         },
       ],
       edges: [
-        { id: "e1", source: "init-1", sourceHandle: "right", target: "metric-rate", targetHandle: "left" },
-        { id: "e2", source: "init-2", sourceHandle: "right", target: "metric-rate", targetHandle: "left" },
-        { id: "e3", source: "init-3", sourceHandle: "right", target: "metric-quality", targetHandle: "left" },
-        { id: "e4", source: "metric-rate", sourceHandle: "right", target: "key-metric", targetHandle: "left" },
-        { id: "e5", source: "metric-quality", sourceHandle: "right", target: "key-metric", targetHandle: "left" },
-        { id: "e6", source: "key-metric", sourceHandle: "right", target: "outcome-inventory", targetHandle: "left" },
-        { id: "e7", source: "key-metric", sourceHandle: "right", target: "outcome-revenue", targetHandle: "left" },
-        { id: "e8", source: "outcome-inventory", sourceHandle: "bottom", target: "goal", targetHandle: "top" },
-        { id: "e9", source: "outcome-revenue", sourceHandle: "bottom", target: "goal", targetHandle: "top" },
+        { id: "e1", source: "device-1", sourceHandle: "right", target: "rule-1", targetHandle: "left" },
+        { id: "e2", source: "rule-1", sourceHandle: "right", target: "email-1", targetHandle: "left" },
+        { id: "e3", source: "rule-1", sourceHandle: "right", target: "sms-1", targetHandle: "left" },
       ],
     },
     {
       id: "2",
-      name: "Supply Chain Monitor",
-      schedule: "At 12:00 AM, daily",
-      lastRun: { status: "completed", time: "34 minutes ago" },
-      nextRun: "2024-12-10 00:00",
+      name: "Low Pressure Alert",
+      description: "Monitor pressure drops in Zone B",
+      enabled: false,
       nodes: [],
       edges: [],
     },
@@ -156,6 +81,23 @@ const workflowsSlice = createSlice({
     },
     setActiveWorkflow: (state, action) => {
       state.activeWorkflowId = action.payload;
+    },
+
+    // Workflow metadata updates
+    updateWorkflowMeta: (state, action) => {
+      const { id, name, description, enabled } = action.payload;
+      const workflow = state.items.find((w) => w.id === id);
+      if (workflow) {
+        if (name !== undefined) workflow.name = name;
+        if (description !== undefined) workflow.description = description;
+        if (enabled !== undefined) workflow.enabled = enabled;
+      }
+    },
+    toggleWorkflowEnabled: (state, action) => {
+      const workflow = state.items.find((w) => w.id === action.payload);
+      if (workflow) {
+        workflow.enabled = !workflow.enabled;
+      }
     },
 
     // Node CRUD (operates on active workflow)
@@ -219,6 +161,8 @@ export const {
   updateWorkflow,
   deleteWorkflow,
   setActiveWorkflow,
+  updateWorkflowMeta,
+  toggleWorkflowEnabled,
   addNode,
   updateNode,
   deleteNode,

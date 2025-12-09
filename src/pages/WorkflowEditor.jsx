@@ -11,25 +11,34 @@ import ReactFlow, {
   MarkerType,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import { ArrowLeft, Check, Pencil, Save } from "lucide-react";
+import { ArrowLeft, Check, Pencil, Save, Power } from "lucide-react";
 
-import InitiativeNode from "../components/InitiativeNode";
-import MetricNode from "../components/MetricNode";
-import KeyMetricNode from "../components/KeyMetricNode";
-import BetNode from "../components/BetNode";
+// New telemetry node components
+import DeviceSelectorNode from "../components/nodes/DeviceSelectorNode";
+import RuleNode from "../components/nodes/RuleNode";
+import EmailActionNode from "../components/nodes/EmailActionNode";
+import SmsActionNode from "../components/nodes/SmsActionNode";
+
+// Form modal
+import NodeFormModal from "../components/forms/NodeFormModal";
+
+// Constants and store
+import { NODE_TYPES, NODE_CONFIG, getDefaultNodeData } from "../constants/nodeConfig";
 import {
   selectWorkflowById,
   setActiveWorkflow,
   setNodes as setStoreNodes,
   setEdges as setStoreEdges,
   updateWorkflow,
+  toggleWorkflowEnabled,
 } from "../store/workflowsSlice";
 
+// Register new node types
 const nodeTypes = {
-  initiativeNode: InitiativeNode,
-  metricNode: MetricNode,
-  keyMetricNode: KeyMetricNode,
-  betNode: BetNode,
+  deviceSelector: DeviceSelectorNode,
+  rule: RuleNode,
+  emailAction: EmailActionNode,
+  smsAction: SmsActionNode,
 };
 
 const defaultEdgeOptions = {
@@ -45,22 +54,23 @@ export default function WorkflowEditor() {
   const workflow = useSelector(selectWorkflowById(id));
   const isNewWorkflow = id === "new";
 
-  // Refs for tracking initialization and valid workflow
+  // Refs for tracking initialization
   const initialized = useRef(false);
   const workflowIdRef = useRef(null);
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
-  const [nodeName, setNodeName] = useState("");
-  const [nodeType, setNodeType] = useState("initiativeNode");
-  const [selectedNode, setSelectedNode] = useState(null);
-  const [updateLabel, setUpdateLabel] = useState("");
+  // Modal state for node editing
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [pendingNodeType, setPendingNodeType] = useState(null);
+  const [editingNodeId, setEditingNodeId] = useState(null);
+  const [modalInitialValues, setModalInitialValues] = useState({});
 
   // Workflow name editing
   const [isEditingName, setIsEditingName] = useState(false);
   const [editingNameValue, setEditingNameValue] = useState("");
-  const [saveStatus, setSaveStatus] = useState("saved"); // "saved" | "saving"
+  const [saveStatus, setSaveStatus] = useState("saved");
   const nameInputRef = useRef(null);
 
   // Initialize from Redux when workflow loads (only once per id)
@@ -133,75 +143,77 @@ export default function WorkflowEditor() {
     setTimeout(() => setSaveStatus("saved"), 500);
   }, [workflow, nodes, edges, editingNameValue, dispatch]);
 
-  // Get display name
+  // Toggle workflow enabled status
+  const handleToggleEnabled = useCallback(() => {
+    if (!workflow) return;
+    dispatch(toggleWorkflowEnabled(workflow.id));
+  }, [workflow, dispatch]);
+
+  // Get display values
   const displayName = workflow?.name || "Untitled Workflow";
+  const displayDescription = workflow?.description || "Configure device monitoring rules and actions";
 
   const onConnect = useCallback(
     (connection) => setEdges((eds) => addEdge(connection, eds)),
     [setEdges]
   );
 
-  const handleAddNode = useCallback(() => {
-    if (!nodeName.trim()) return;
-    const nodeData = {
-      initiativeNode: { title: nodeName, timeEstimate: "4 hours", progress: 0 },
-      metricNode: {
-        title: nodeName,
-        tag: "New",
-        metrics: [
-          { label: "Value", value: "0", change: "0%" },
-          { label: "Value", value: "0", change: "0%" },
-          { label: "Value", value: "0", change: "0%" },
-        ],
-      },
-      keyMetricNode: {
-        title: nodeName,
-        tag: "Key Metric",
-        metrics: [
-          { label: "Value", value: "0", change: "0%" },
-          { label: "Value", value: "0", change: "0%" },
-          { label: "Value", value: "0", change: "0%" },
-        ],
-      },
-      betNode: { title: nodeName, tag: "Owner", status: "Active" },
-    };
-    setNodes((nds) => [
-      ...nds,
-      {
-        id: `node-${Date.now()}`,
-        type: nodeType,
-        position: { x: Math.random() * 400 + 200, y: Math.random() * 300 + 100 },
-        data: nodeData[nodeType],
-      },
-    ]);
-    setNodeName("");
-  }, [nodeName, nodeType, setNodes]);
+  // Handle "Add Node" button click - opens modal with defaults
+  const handleAddNodeClick = useCallback((nodeType) => {
+    setPendingNodeType(nodeType);
+    setEditingNodeId(null);
+    setModalInitialValues(getDefaultNodeData(nodeType));
+    setIsModalOpen(true);
+  }, []);
 
-  const updateNodeTitle = useCallback(() => {
-    if (!selectedNode || !updateLabel.trim()) return;
-    setNodes((nds) =>
-      nds.map((n) =>
-        n.id === selectedNode.id ? { ...n, data: { ...n.data, title: updateLabel } } : n
-      )
-    );
-    setUpdateLabel("");
-    setSelectedNode(null);
-  }, [selectedNode, updateLabel, setNodes]);
+  // Handle node double-click - opens modal for editing
+  const handleNodeDoubleClick = useCallback((event, node) => {
+    setPendingNodeType(node.type);
+    setEditingNodeId(node.id);
+    setModalInitialValues(node.data);
+    setIsModalOpen(true);
+  }, []);
 
+  // Handle modal submit - create new or update existing node
+  const handleModalSubmit = useCallback(
+    (values) => {
+      if (editingNodeId) {
+        // Update existing node
+        setNodes((nds) =>
+          nds.map((n) =>
+            n.id === editingNodeId ? { ...n, data: values } : n
+          )
+        );
+      } else {
+        // Create new node
+        const newNode = {
+          id: `node-${Date.now()}`,
+          type: pendingNodeType,
+          position: { x: Math.random() * 400 + 100, y: Math.random() * 300 + 100 },
+          data: values,
+        };
+        setNodes((nds) => [...nds, newNode]);
+      }
+    },
+    [editingNodeId, pendingNodeType, setNodes]
+  );
+
+  // Handle modal close
+  const handleModalClose = useCallback(() => {
+    setIsModalOpen(false);
+    setPendingNodeType(null);
+    setEditingNodeId(null);
+    setModalInitialValues({});
+  }, []);
+
+  // Delete selected nodes/edges
   const deleteSelected = useCallback(() => {
     setNodes((nds) => nds.filter((n) => !n.selected));
     setEdges((eds) => eds.filter((e) => !e.selected));
-    setSelectedNode(null);
   }, [setNodes, setEdges]);
 
-  const onNodeClick = useCallback((_, node) => {
-    setSelectedNode(node);
-    setUpdateLabel(node.data.title || "");
-  }, []);
-
   const onPaneClick = useCallback(() => {
-    setSelectedNode(null);
-    setUpdateLabel("");
+    // Deselect when clicking pane
   }, []);
 
   // Handle case where workflow doesn't exist
@@ -223,6 +235,7 @@ export default function WorkflowEditor() {
 
   return (
     <div className="h-screen flex flex-col">
+      {/* Header */}
       <div className="p-4 bg-gray-100 border-b border-gray-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -243,18 +256,14 @@ export default function WorkflowEditor() {
                     onBlur={handleNameSave}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") handleNameSave();
-                      if (e.key === "Escape") {
-                        setIsEditingName(false);
-                      }
+                      if (e.key === "Escape") setIsEditingName(false);
                     }}
                     className="text-xl font-bold text-gray-800 bg-white px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
                   />
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
-                  <h1 className="text-xl font-bold text-gray-800">
-                    {displayName}
-                  </h1>
+                  <h1 className="text-xl font-bold text-gray-800">{displayName}</h1>
                   {workflow && (
                     <button
                       onClick={startEditingName}
@@ -265,23 +274,39 @@ export default function WorkflowEditor() {
                   )}
                 </div>
               )}
-              <p className="text-sm text-gray-500">
-                {isNewWorkflow
-                  ? "Create a new workflow"
-                  : "Initiatives → Metrics → Key Driver → Outcomes"}
-              </p>
+              <p className="text-sm text-gray-500">{displayDescription}</p>
             </div>
           </div>
 
           {workflow && (
             <div className="flex items-center gap-3">
-              <span className={`text-sm flex items-center gap-1 ${
-                saveStatus === "saved" ? "text-emerald-600" :
-                saveStatus === "saving" ? "text-amber-500" : "text-gray-400"
-              }`}>
+              {/* Enabled toggle */}
+              <button
+                onClick={handleToggleEnabled}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm ${
+                  workflow.enabled
+                    ? "bg-emerald-100 text-emerald-700"
+                    : "bg-gray-100 text-gray-500"
+                }`}
+              >
+                <Power size={14} />
+                {workflow.enabled ? "Enabled" : "Disabled"}
+              </button>
+
+              {/* Save status */}
+              <span
+                className={`text-sm flex items-center gap-1 ${
+                  saveStatus === "saved"
+                    ? "text-emerald-600"
+                    : saveStatus === "saving"
+                    ? "text-amber-500"
+                    : "text-gray-400"
+                }`}
+              >
                 {saveStatus === "saved" && <Check size={16} />}
                 {saveStatus === "saved" ? "Saved" : saveStatus === "saving" ? "Saving..." : "Unsaved"}
               </span>
+
               <button
                 onClick={handleSave}
                 className="flex items-center gap-2 px-4 py-2 bg-emerald-500 text-white rounded-md text-sm hover:bg-emerald-600"
@@ -294,59 +319,40 @@ export default function WorkflowEditor() {
         </div>
       </div>
 
-      <div className="p-3 bg-white border-b border-gray-200 flex gap-4 items-center flex-wrap">
-        <div className="flex gap-2 items-center">
-          <input
-            type="text"
-            value={nodeName}
-            onChange={(e) => setNodeName(e.target.value)}
-            placeholder="Node title"
-            className="px-3 py-2 border border-gray-300 rounded-md text-sm"
-          />
-          <select
-            value={nodeType}
-            onChange={(e) => setNodeType(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-md text-sm"
-          >
-            <option value="initiativeNode">Initiative</option>
-            <option value="metricNode">Metric</option>
-            <option value="keyMetricNode">Key Metric</option>
-            <option value="betNode">Goal</option>
-          </select>
+      {/* Toolbar */}
+      <div className="p-3 bg-white border-b border-gray-200 flex gap-2 items-center flex-wrap">
+        <span className="text-sm text-gray-500 mr-2">Add:</span>
+        {Object.entries(NODE_CONFIG).map(([type, config]) => (
           <button
-            onClick={handleAddNode}
-            className="px-4 py-2 bg-purple-500 text-white rounded-md text-sm hover:bg-purple-600"
+            key={type}
+            onClick={() => handleAddNodeClick(type)}
+            className="px-3 py-1.5 text-sm rounded-md border transition-colors"
+            style={{
+              borderColor: config.color,
+              color: config.color,
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = config.color;
+              e.currentTarget.style.color = "white";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "transparent";
+              e.currentTarget.style.color = config.color;
+            }}
           >
-            Add
+            {config.label}
           </button>
-        </div>
+        ))}
+        <div className="flex-1" />
         <button
           onClick={deleteSelected}
-          className="px-4 py-2 bg-red-500 text-white rounded-md text-sm hover:bg-red-600"
+          className="px-4 py-1.5 bg-red-500 text-white rounded-md text-sm hover:bg-red-600"
         >
-          Delete
+          Delete Selected
         </button>
-        {selectedNode && (
-          <div className="flex gap-2 items-center border-l pl-4">
-            <span className="text-sm">
-              Editing: <strong>{selectedNode.data.title}</strong>
-            </span>
-            <input
-              type="text"
-              value={updateLabel}
-              onChange={(e) => setUpdateLabel(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-md text-sm"
-            />
-            <button
-              onClick={updateNodeTitle}
-              className="px-4 py-2 bg-purple-500 text-white rounded-md text-sm"
-            >
-              Update
-            </button>
-          </div>
-        )}
       </div>
 
+      {/* Canvas */}
       <div className="flex-1">
         <ReactFlow
           nodes={nodes}
@@ -356,29 +362,30 @@ export default function WorkflowEditor() {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
-          onNodeClick={onNodeClick}
+          onNodeDoubleClick={handleNodeDoubleClick}
           onPaneClick={onPaneClick}
           fitView
         >
           <Controls />
           <MiniMap
             nodeColor={(node) => {
-              switch (node.type) {
-                case "initiativeNode":
-                  return "#fbbf24";
-                case "keyMetricNode":
-                  return "#4ade80";
-                case "betNode":
-                  return "#a855f7";
-                default:
-                  return "#e5e7eb";
-              }
+              const config = NODE_CONFIG[node.type];
+              return config?.color || "#e5e7eb";
             }}
             maskColor="rgba(0, 0, 0, 0.1)"
           />
           <Background gap={32} />
         </ReactFlow>
       </div>
+
+      {/* Node Form Modal */}
+      <NodeFormModal
+        isOpen={isModalOpen}
+        onClose={handleModalClose}
+        nodeType={pendingNodeType}
+        initialValues={modalInitialValues}
+        onSubmit={handleModalSubmit}
+      />
     </div>
   );
 }

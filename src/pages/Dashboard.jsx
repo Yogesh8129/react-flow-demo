@@ -21,9 +21,8 @@ export default function Dashboard() {
     const newWorkflow = {
       id: newId,
       name: "Untitled Workflow",
-      schedule: "Not scheduled",
-      lastRun: { status: "never", time: "" },
-      nextRun: "Not scheduled",
+      description: "",
+      enabled: false, // Start disabled until configured
       nodes: [],
       edges: [],
     };
@@ -39,9 +38,9 @@ export default function Dashboard() {
         <div className="p-6 border-b border-gray-200 bg-white">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-sm text-gray-500 mb-1">Home → Workflows</div>
-              <h1 className="text-2xl font-bold text-gray-900">Workflows</h1>
-              <p className="text-gray-500 text-sm">Manage your workflows</p>
+              <div className="text-sm text-gray-500 mb-1">Home → Alert Workflows</div>
+              <h1 className="text-2xl font-bold text-gray-900">Alert Workflows</h1>
+              <p className="text-gray-500 text-sm">Configure telemetry monitoring rules and actions</p>
             </div>
             <button
               onClick={handleCreateWorkflow}

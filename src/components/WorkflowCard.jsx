@@ -1,37 +1,66 @@
 import { useNavigate } from "react-router-dom";
-import { Play, Clock, Trash2 } from "lucide-react";
+import { Play, Trash2, Power, GitBranch, Mail, MessageSquare } from "lucide-react";
 
 export default function WorkflowCard({ workflow, onDelete }) {
   const navigate = useNavigate();
-  const nodeCount = workflow.nodes?.length || 0;
+
+  // Count nodes by type
+  const rulesCount = workflow.nodes?.filter((n) => n.type === "rule").length || 0;
+  const actionsCount =
+    workflow.nodes?.filter(
+      (n) => n.type === "emailAction" || n.type === "smsAction"
+    ).length || 0;
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-sm transition-shadow">
       <div className="flex items-start justify-between">
         <div className="flex gap-3">
-          <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
-            <Play size={18} className="text-emerald-600 ml-0.5" />
+          <div
+            className={`w-10 h-10 rounded-full flex items-center justify-center ${
+              workflow.enabled ? "bg-emerald-100" : "bg-gray-100"
+            }`}
+          >
+            <Play
+              size={18}
+              className={`ml-0.5 ${
+                workflow.enabled ? "text-emerald-600" : "text-gray-400"
+              }`}
+            />
           </div>
           <div>
-            <h3 className="font-medium text-gray-900">{workflow.name}</h3>
-            <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
-              <Clock size={14} />
-              <span className="text-emerald-600">{workflow.schedule}</span>
-              <span>→</span>
-              <span>{nodeCount} nodes</span>
+            <div className="flex items-center gap-2">
+              <h3 className="font-medium text-gray-900">{workflow.name}</h3>
+              <span
+                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs ${
+                  workflow.enabled
+                    ? "bg-emerald-100 text-emerald-700"
+                    : "bg-gray-100 text-gray-500"
+                }`}
+              >
+                <Power size={10} />
+                {workflow.enabled ? "Enabled" : "Disabled"}
+              </span>
             </div>
-            <div className="text-xs text-gray-400 mt-2">
-              Last run:{" "}
-              <span className="text-emerald-600">{workflow.lastRun.status}</span>
-              {workflow.lastRun.time && ` ${workflow.lastRun.time}`}
+
+            {workflow.description && (
+              <p className="text-sm text-gray-500 mt-0.5">{workflow.description}</p>
+            )}
+
+            <div className="flex items-center gap-3 text-sm text-gray-500 mt-2">
+              <span className="flex items-center gap-1">
+                <GitBranch size={14} className="text-amber-500" />
+                {rulesCount} {rulesCount === 1 ? "rule" : "rules"}
+              </span>
+              <span className="flex items-center gap-1">
+                <Mail size={14} className="text-emerald-500" />
+                <MessageSquare size={14} className="text-violet-500" />
+                {actionsCount} {actionsCount === 1 ? "action" : "actions"}
+              </span>
             </div>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <button className="px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded">
-            Run
-          </button>
           <button
             onClick={() => navigate(`/workflow/${workflow.id}`)}
             className="px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded"
@@ -45,10 +74,6 @@ export default function WorkflowCard({ workflow, onDelete }) {
             <Trash2 size={16} />
           </button>
         </div>
-      </div>
-
-      <div className="text-xs text-gray-400 mt-3 text-right">
-        Next run at: {workflow.nextRun}
       </div>
     </div>
   );
