@@ -7,12 +7,12 @@ import {
   XCircle,
   Loader2,
   type LucideIcon,
-} from 'lucide-react';
+} from "lucide-react";
 import {
   SIMULATION_STEPS,
   type SimulationStep,
   type StepDetails,
-} from '@/hooks/useSimulation';
+} from "@/hooks/useSimulation";
 
 interface StepConfig {
   icon: LucideIcon;
@@ -24,45 +24,45 @@ interface StepConfig {
 const stepConfig: Record<SimulationStep, StepConfig> = {
   [SIMULATION_STEPS.IDLE]: {
     icon: Loader2,
-    title: 'Preparing...',
-    color: 'text-gray-500',
-    bgColor: 'bg-gray-50',
+    title: "Preparing...",
+    color: "text-muted-foreground",
+    bgColor: "bg-muted",
   },
   [SIMULATION_STEPS.SELECTING_DEVICES]: {
     icon: Monitor,
-    title: 'Selecting Devices',
-    color: 'text-blue-500',
-    bgColor: 'bg-blue-50',
+    title: "Selecting Devices",
+    color: "text-blue-500",
+    bgColor: "bg-blue-50 dark:bg-blue-950/50",
   },
   [SIMULATION_STEPS.EVALUATING_RULES]: {
     icon: GitBranch,
-    title: 'Evaluating Rules',
-    color: 'text-amber-500',
-    bgColor: 'bg-amber-50',
+    title: "Evaluating Rules",
+    color: "text-amber-500",
+    bgColor: "bg-amber-50 dark:bg-amber-950/50",
   },
   [SIMULATION_STEPS.RULE_TRIGGERED]: {
     icon: Zap,
-    title: 'Rule Triggered!',
-    color: 'text-orange-500',
-    bgColor: 'bg-orange-50',
+    title: "Rule Triggered!",
+    color: "text-orange-500",
+    bgColor: "bg-orange-50 dark:bg-orange-950/50",
   },
   [SIMULATION_STEPS.EXECUTING_ACTIONS]: {
     icon: Send,
-    title: 'Executing Actions',
-    color: 'text-emerald-500',
-    bgColor: 'bg-emerald-50',
+    title: "Executing Actions",
+    color: "text-emerald-500",
+    bgColor: "bg-emerald-50 dark:bg-emerald-950/50",
   },
   [SIMULATION_STEPS.COMPLETED]: {
     icon: CheckCircle,
-    title: 'Simulation Complete',
-    color: 'text-green-500',
-    bgColor: 'bg-green-50',
+    title: "Simulation Complete",
+    color: "text-success",
+    bgColor: "bg-success/10",
   },
   [SIMULATION_STEPS.ERROR]: {
     icon: XCircle,
-    title: 'Simulation Failed',
-    color: 'text-red-500',
-    bgColor: 'bg-red-50',
+    title: "Simulation Failed",
+    color: "text-destructive",
+    bgColor: "bg-destructive/10",
   },
 };
 
@@ -87,8 +87,7 @@ export default function SimulationModal({
   const Icon = config?.icon || Loader2;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Backdrop */}
+    <div className="fixed inset-0 z-modal flex items-center justify-center">
       <div
         className="absolute inset-0 bg-black/50"
         onClick={
@@ -99,53 +98,48 @@ export default function SimulationModal({
         }
       />
 
-      {/* Modal */}
-      <div className="relative bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
-        {/* Progress bar */}
-        <div className="h-1 bg-gray-200">
+      <div className="relative bg-card text-card-foreground rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
+        <div className="h-1 bg-muted">
           <div
-            className="h-full bg-emerald-500 transition-all duration-500 ease-out"
+            className="h-full bg-primary transition-all duration-500 ease-out"
             style={{ width: `${progress}%` }}
           />
         </div>
 
-        {/* Content */}
         <div className="p-6">
-          {/* Step indicator */}
           <div className="flex flex-col items-center text-center">
             <div
               className={`w-16 h-16 rounded-full flex items-center justify-center ${
-                config?.bgColor || 'bg-gray-50'
+                config?.bgColor || "bg-muted"
               } mb-4`}
             >
               <Icon
                 size={32}
-                className={`${config?.color || 'text-gray-500'} ${
+                className={`${config?.color || "text-muted-foreground"} ${
                   currentStep !== SIMULATION_STEPS.COMPLETED &&
                   currentStep !== SIMULATION_STEPS.ERROR
-                    ? 'animate-pulse'
-                    : ''
+                    ? "animate-pulse"
+                    : ""
                 }`}
               />
             </div>
 
             <h3
               className={`text-lg font-semibold ${
-                config?.color || 'text-gray-700'
+                config?.color || "text-foreground"
               }`}
             >
-              {config?.title || 'Running Simulation...'}
+              {config?.title || "Running Simulation..."}
             </h3>
 
-            {/* Step details */}
-            <div className="mt-4 text-sm text-gray-600 w-full">
+            <div className="mt-4 text-sm text-muted-foreground w-full">
               {currentStep === SIMULATION_STEPS.SELECTING_DEVICES &&
                 stepDetails?.devices && (
                   <div className="flex flex-wrap justify-center gap-2">
                     {stepDetails.devices.map((device, i) => (
                       <span
                         key={i}
-                        className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs"
+                        className="px-2 py-1 bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 rounded text-xs"
                       >
                         {device}
                       </span>
@@ -159,7 +153,7 @@ export default function SimulationModal({
                     {stepDetails.rules.map((rule, i) => (
                       <div
                         key={i}
-                        className="px-3 py-2 bg-amber-50 rounded text-amber-700 text-xs"
+                        className="px-3 py-2 bg-amber-50 dark:bg-amber-900/30 rounded text-amber-700 dark:text-amber-300 text-xs"
                       >
                         {rule.parameter} {rule.comparator} {rule.threshold}
                       </div>
@@ -168,7 +162,7 @@ export default function SimulationModal({
                 )}
 
               {currentStep === SIMULATION_STEPS.RULE_TRIGGERED && (
-                <p className="text-orange-600 font-medium">
+                <p className="text-orange-600 dark:text-orange-400 font-medium">
                   {stepDetails?.triggeredRules} rule(s) triggered! Executing
                   actions...
                 </p>
@@ -182,21 +176,20 @@ export default function SimulationModal({
               )}
 
               {currentStep === SIMULATION_STEPS.COMPLETED && (
-                <p className="text-green-600">All actions executed successfully!</p>
+                <p className="text-success">All actions executed successfully!</p>
               )}
 
               {currentStep === SIMULATION_STEPS.ERROR && stepDetails?.error && (
-                <p className="text-red-600">{stepDetails.error}</p>
+                <p className="text-destructive">{stepDetails.error}</p>
               )}
             </div>
           </div>
 
-          {/* Close button - only show when completed or error */}
           {(currentStep === SIMULATION_STEPS.COMPLETED ||
             currentStep === SIMULATION_STEPS.ERROR) && (
             <button
               onClick={onClose}
-              className="mt-6 w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors"
+              className="mt-6 w-full px-4 py-2 bg-muted text-foreground rounded-md hover:bg-accent transition-colors"
             >
               Close
             </button>

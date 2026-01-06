@@ -1,4 +1,4 @@
-import type { ChangeEvent } from 'react';
+import type { ChangeEvent } from "react";
 
 interface SelectOption {
   value: string;
@@ -17,7 +17,7 @@ export default function FormSelect({
   value,
   onChange,
   options,
-  placeholder = 'Select...',
+  placeholder = "Select...",
   name,
 }: FormSelectProps) {
   return (
@@ -26,7 +26,7 @@ export default function FormSelect({
       name={name}
       value={value}
       onChange={onChange}
-      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+      className="w-full px-3 py-2 bg-card text-foreground border border-input rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition-colors"
     >
       {placeholder && (
         <option value="" disabled>

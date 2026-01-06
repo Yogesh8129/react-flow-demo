@@ -1,6 +1,6 @@
-import type { ReactNode } from 'react';
-import { Handle, type HandleProps } from 'reactflow';
-import { cn } from '@/lib/utils';
+import type { ReactNode } from "react";
+import { Handle, type HandleProps } from "reactflow";
+import { cn } from "@/lib/utils";
 
 interface BaseHandleProps extends HandleProps {
   className?: string;
@@ -12,7 +12,7 @@ export function BaseHandle({ className, children, ...props }: BaseHandleProps) {
     <Handle
       {...props}
       className={cn(
-        'dark:border-secondary dark:bg-secondary h-[11px] w-[11px] rounded-full border border-slate-300 bg-slate-100 transition',
+        "h-[11px] w-[11px] rounded-full border border-input bg-muted transition-colors hover:bg-primary hover:border-primary",
         className
       )}
     >

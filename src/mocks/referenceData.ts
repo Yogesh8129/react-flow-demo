@@ -11,9 +11,9 @@ import type {
   ParameterOption,
 } from '@/types';
 
-// ============================================
+
 // Mock Data
-// ============================================
+
 
 export const mockReferenceData: ReferenceData = {
   plants: [
@@ -73,9 +73,9 @@ export const mockReferenceDataResponse: ReferenceDataResponse = {
   meta: mockReferenceData,
 };
 
-// ============================================
+
 // Helper Functions
-// ============================================
+
 
 /**
  * Get the unit for a parameter value.

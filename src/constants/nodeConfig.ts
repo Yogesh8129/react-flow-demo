@@ -12,9 +12,9 @@ import type {
   WorkflowNodeData,
 } from '@/types';
 
-// ============================================
+
 // Node Type Identifiers
-// ============================================
+
 
 export const NODE_TYPES = {
   DEVICE_SELECTOR: 'deviceSelector',
@@ -23,9 +23,9 @@ export const NODE_TYPES = {
   SMS_ACTION: 'smsAction',
 } as const;
 
-// ============================================
+
 // Node Categories
-// ============================================
+
 
 export const NODE_CATEGORIES = {
   INPUT: 'input',
@@ -35,9 +35,9 @@ export const NODE_CATEGORIES = {
 
 type NodeCategory = (typeof NODE_CATEGORIES)[keyof typeof NODE_CATEGORIES];
 
-// ============================================
+
 // Node Configuration
-// ============================================
+
 
 interface NodeConfigItem {
   label: string;
@@ -93,9 +93,9 @@ export const NODE_CONFIG: Record<NodeType, NodeConfigItem> = {
   },
 };
 
-// ============================================
+
 // Default Node Data
-// ============================================
+
 
 /**
  * Get default data for a new node of given type.

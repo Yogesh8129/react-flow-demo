@@ -5,9 +5,9 @@
 
 import type { Node, Edge } from 'reactflow';
 
-// ============================================
+
 // Enums / Literal Types
-// ============================================
+
 
 /** Comparator operators for rule conditions */
 export type Comparator = '>' | '<' | '>=' | '<=' | '==';
@@ -24,9 +24,9 @@ export type ActionType = 'email' | 'sms';
 /** Node type identifiers matching NODE_TYPES constant */
 export type NodeType = 'deviceSelector' | 'rule' | 'emailAction' | 'smsAction';
 
-// ============================================
+
 // Device Selector
-// ============================================
+
 
 /**
  * DeviceSelector defines which devices to monitor.
@@ -42,9 +42,9 @@ export interface DeviceSelector {
   assets: string[];
 }
 
-// ============================================
+
 // Rule / Condition
-// ============================================
+
 
 /** Configuration for alert repeat behavior */
 export interface RepeatPolicy {
@@ -72,9 +72,9 @@ export interface Rule {
   repeat_policy: RepeatPolicy;
 }
 
-// ============================================
+
 // Actions
-// ============================================
+
 
 /** Action to execute when workflow triggers */
 export interface Action {
@@ -83,9 +83,9 @@ export interface Action {
   recipients: string[];
 }
 
-// ============================================
+
 // Workflow
-// ============================================
+
 
 /** Complete workflow entity as stored in Redux/database */
 export interface Workflow {
@@ -109,9 +109,9 @@ export interface WorkflowPayload {
   actions: Action[];
 }
 
-// ============================================
+
 // Node Data Types (ReactFlow node.data shapes)
-// ============================================
+
 
 /** Data shape for DeviceSelector node */
 export interface DeviceSelectorNodeData extends DeviceSelector {}
@@ -142,9 +142,9 @@ export interface WorkflowNode extends Omit<Node, 'data' | 'type'> {
   data: WorkflowNodeData;
 }
 
-// ============================================
+
 // Validation Types
-// ============================================
+
 
 /** Result of workflow validation */
 export interface ValidationResult {

@@ -7,18 +7,18 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { Edge } from 'reactflow';
 import type { Workflow, WorkflowNode, WorkflowNodeData } from '@/types';
 
-// ============================================
+
 // State Type
-// ============================================
+
 
 interface WorkflowsState {
   items: Workflow[];
   activeWorkflowId: string | null;
 }
 
-// ============================================
+
 // Initial State
-// ============================================
+
 
 const initialState: WorkflowsState = {
   items: [
@@ -104,9 +104,9 @@ const initialState: WorkflowsState = {
   activeWorkflowId: null,
 };
 
-// ============================================
+
 // Slice
-// ============================================
+
 
 const workflowsSlice = createSlice({
   name: 'workflows',
@@ -255,9 +255,9 @@ const workflowsSlice = createSlice({
   },
 });
 
-// ============================================
+
 // Exports
-// ============================================
+
 
 export const {
   addWorkflow,
@@ -275,9 +275,9 @@ export const {
   setEdges,
 } = workflowsSlice.actions;
 
-// ============================================
+
 // Selectors
-// ============================================
+
 
 interface RootState {
   workflows: WorkflowsState;

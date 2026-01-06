@@ -11,9 +11,9 @@ import FormSelect from '../ui/FormSelect';
 import { mockReferenceData, getParameterUnit } from '@/mocks/referenceData';
 import type { RuleNodeData } from '@/types';
 
-// ============================================
+
 // Static Options
-// ============================================
+
 
 const comparatorOptions = [
   { value: '>', label: '> (greater than)' },
@@ -37,9 +37,9 @@ const repeatPolicyOptions = [
   { value: 'always', label: 'Always' },
 ];
 
-// ============================================
+
 // Component
-// ============================================
+
 
 interface RuleFormProps {
   formik: FormikProps<RuleNodeData>;
@@ -230,9 +230,9 @@ export default function RuleForm({ formik }: RuleFormProps) {
   );
 }
 
-// ============================================
+
 // Rule Summary Component
-// ============================================
+
 
 interface RuleSummaryProps {
   values: RuleNodeData;

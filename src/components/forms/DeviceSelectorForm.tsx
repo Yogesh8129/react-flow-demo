@@ -100,9 +100,9 @@ export default function DeviceSelectorForm({ formik }: DeviceSelectorFormProps) 
   );
 }
 
-// ============================================
+
 // Selection Summary Component
-// ============================================
+
 
 interface SelectionSummaryProps {
   plants: string[];

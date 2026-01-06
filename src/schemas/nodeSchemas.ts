@@ -6,9 +6,9 @@
 import { z } from 'zod';
 import type { NodeType } from '@/types';
 
-// ============================================
+
 // Reusable Schema Parts
-// ============================================
+
 
 const nonEmptyString = z.string().min(1, 'Required');
 
@@ -22,9 +22,9 @@ const phoneArray = z
 
 const stringArray = z.array(z.string());
 
-// ============================================
+
 // Device Selector Schema
-// ============================================
+
 
 /**
  * Device selector validates that at least one filter is selected.
@@ -48,9 +48,9 @@ export const deviceSelectorSchema = z
 
 export type DeviceSelectorSchemaType = z.infer<typeof deviceSelectorSchema>;
 
-// ============================================
+
 // Rule Schema
-// ============================================
+
 
 export const ruleSchema = z.object({
   parameter: nonEmptyString,
@@ -66,9 +66,9 @@ export const ruleSchema = z.object({
 
 export type RuleSchemaType = z.infer<typeof ruleSchema>;
 
-// ============================================
+
 // Action Schemas
-// ============================================
+
 
 export const emailActionSchema = z.object({
   recipients: emailArray,
@@ -82,9 +82,9 @@ export const smsActionSchema = z.object({
 
 export type SmsActionSchemaType = z.infer<typeof smsActionSchema>;
 
-// ============================================
+
 // Schema Registry
-// ============================================
+
 
 /** Map of node types to their validation schemas */
 export const nodeSchemas = {
@@ -96,9 +96,9 @@ export const nodeSchemas = {
 
 type NodeSchemaMap = typeof nodeSchemas;
 
-// ============================================
+
 // Validation Helper
-// ============================================
+
 
 /**
  * Validate node data against its schema.

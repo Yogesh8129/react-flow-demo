@@ -5,9 +5,9 @@
 
 import type { Workflow, WorkflowPayload } from './workflow';
 
-// ============================================
+
 // Generic Response Types
-// ============================================
+
 
 /** Standard API response wrapper */
 export interface ApiResponse<T = unknown> {
@@ -27,9 +27,9 @@ export interface PaginatedResponse<T> extends ApiResponse<T[]> {
   };
 }
 
-// ============================================
+
 // Workflow API Types
-// ============================================
+
 
 /** Response for GET /api/workflows */
 export type WorkflowListResponse = ApiResponse<Workflow[]>;
@@ -43,9 +43,9 @@ export type CreateWorkflowRequest = WorkflowPayload;
 /** Request body for PUT /api/workflows/:id */
 export type UpdateWorkflowRequest = Partial<WorkflowPayload>;
 
-// ============================================
+
 // Workflow Test Types
-// ============================================
+
 
 /** Response for POST /api/workflows/:id/test */
 export interface WorkflowTestResult {
@@ -58,9 +58,9 @@ export interface WorkflowTestResult {
 
 export type WorkflowTestResponse = ApiResponse<WorkflowTestResult>;
 
-// ============================================
+
 // Execution Log Types
-// ============================================
+
 
 /** Single execution log entry */
 export interface ExecutionLog {
@@ -80,9 +80,9 @@ export interface ExecutionLog {
 /** Response for GET /api/workflows/:id/history */
 export type ExecutionHistoryResponse = PaginatedResponse<ExecutionLog>;
 
-// ============================================
+
 // Error Types
-// ============================================
+
 
 /** Structured API error */
 export interface ApiError {

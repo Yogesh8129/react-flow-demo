@@ -1,6 +1,6 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { useState, useCallback, useEffect, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import ReactFlow, {
   Background,
   Controls,
@@ -12,28 +12,23 @@ import ReactFlow, {
   type Connection,
   type NodeMouseHandler,
   type Node,
-  type Edge,
-} from 'reactflow';
-import 'reactflow/dist/style.css';
-import { ArrowLeft, Check, Pencil, Save, Power, Play } from 'lucide-react';
+} from "reactflow";
+import "reactflow/dist/style.css";
+import { ArrowLeft, Check, Pencil, Save, Power, Play } from "lucide-react";
 
-// Node components
-import DeviceSelectorNode from '../components/nodes/DeviceSelectorNode';
-import RuleNode from '../components/nodes/RuleNode';
-import EmailActionNode from '../components/nodes/EmailActionNode';
-import SmsActionNode from '../components/nodes/SmsActionNode';
+import DeviceSelectorNode from "../components/nodes/DeviceSelectorNode";
+import RuleNode from "../components/nodes/RuleNode";
+import EmailActionNode from "../components/nodes/EmailActionNode";
+import SmsActionNode from "../components/nodes/SmsActionNode";
 
-// Form modal and simulation
-import NodeFormModal from '../components/forms/NodeFormModal';
-import SimulationModal from '../components/SimulationModal';
-import useSimulation from '../hooks/useSimulation';
+import NodeFormModal from "../components/forms/NodeFormModal";
+import SimulationModal from "../components/SimulationModal";
+import useSimulation from "../hooks/useSimulation";
 
-// Constants and store
 import {
-  NODE_TYPES,
   NODE_CONFIG,
   getDefaultNodeData,
-} from '../constants/nodeConfig';
+} from "../constants/nodeConfig";
 import {
   selectWorkflowById,
   setActiveWorkflow,
@@ -41,11 +36,10 @@ import {
   setEdges as setStoreEdges,
   updateWorkflow,
   toggleWorkflowEnabled,
-} from '../store/workflowsSlice';
-import type { RootState } from '../store';
-import type { NodeType, WorkflowNodeData, Workflow } from '@/types';
+} from "../store/workflowsSlice";
+import type { RootState } from "../store";
+import type { NodeType, WorkflowNodeData, Workflow } from "@/types";
 
-// Register node types
 const nodeTypes = {
   deviceSelector: DeviceSelectorNode,
   rule: RuleNode,
@@ -54,11 +48,11 @@ const nodeTypes = {
 };
 
 const defaultEdgeOptions = {
-  style: { stroke: '#888', strokeWidth: 2 },
-  markerEnd: { type: MarkerType.ArrowClosed, color: '#888' },
+  style: { stroke: "#888", strokeWidth: 2 },
+  markerEnd: { type: MarkerType.ArrowClosed, color: "#888" },
 };
 
-type SaveStatus = 'saved' | 'saving' | 'unsaved';
+type SaveStatus = "saved" | "saving" | "unsaved";
 
 export default function WorkflowEditor() {
   const { id } = useParams<{ id: string }>();
@@ -68,31 +62,29 @@ export default function WorkflowEditor() {
   const workflow = useSelector((state: RootState) =>
     id ? selectWorkflowById(id)(state) : undefined
   );
-  const isNewWorkflow = id === 'new';
+  const isNewWorkflow = id === "new";
 
-  // Refs for tracking initialization
   const initialized = useRef(false);
   const workflowIdRef = useRef<string | null>(null);
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
-  // Modal state for node editing
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [pendingNodeType, setPendingNodeType] = useState<NodeType | null>(null);
   const [editingNodeId, setEditingNodeId] = useState<string | null>(null);
-  const [modalInitialValues, setModalInitialValues] = useState<WorkflowNodeData | Record<string, never>>({});
+  const [modalInitialValues, setModalInitialValues] = useState<
+    WorkflowNodeData | Record<string, never>
+  >({});
 
-  // Workflow name and description editing
   const [isEditingName, setIsEditingName] = useState(false);
-  const [editingNameValue, setEditingNameValue] = useState('');
+  const [editingNameValue, setEditingNameValue] = useState("");
   const [isEditingDescription, setIsEditingDescription] = useState(false);
-  const [editingDescriptionValue, setEditingDescriptionValue] = useState('');
-  const [saveStatus, setSaveStatus] = useState<SaveStatus>('saved');
+  const [editingDescriptionValue, setEditingDescriptionValue] = useState("");
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>("saved");
   const nameInputRef = useRef<HTMLInputElement>(null);
   const descriptionInputRef = useRef<HTMLInputElement>(null);
 
-  // Simulation
   const {
     isRunning: isSimulationRunning,
     currentStep,
@@ -102,7 +94,6 @@ export default function WorkflowEditor() {
     resetSimulation,
   } = useSimulation();
 
-  // Initialize from Redux when workflow loads (only once per id)
   useEffect(() => {
     if (initialized.current) return;
 
@@ -121,25 +112,21 @@ export default function WorkflowEditor() {
     }
   }, [workflow, id, isNewWorkflow, dispatch, setNodes, setEdges]);
 
-  // Reset refs when id changes
   useEffect(() => {
     initialized.current = false;
     workflowIdRef.current = null;
   }, [id]);
 
-  // Sync nodes to Redux when they change (skip initial sync)
   useEffect(() => {
     if (!initialized.current || !workflowIdRef.current) return;
     dispatch(setStoreNodes(nodes));
   }, [nodes, dispatch]);
 
-  // Sync edges to Redux when they change (skip initial sync)
   useEffect(() => {
     if (!initialized.current || !workflowIdRef.current) return;
     dispatch(setStoreEdges(edges));
   }, [edges, dispatch]);
 
-  // Focus name input when editing starts
   useEffect(() => {
     if (isEditingName && nameInputRef.current) {
       nameInputRef.current.focus();
@@ -147,7 +134,6 @@ export default function WorkflowEditor() {
     }
   }, [isEditingName]);
 
-  // Focus description input when editing starts
   useEffect(() => {
     if (isEditingDescription && descriptionInputRef.current) {
       descriptionInputRef.current.focus();
@@ -155,13 +141,11 @@ export default function WorkflowEditor() {
     }
   }, [isEditingDescription]);
 
-  // Start editing workflow name
   const startEditingName = useCallback(() => {
-    setEditingNameValue(workflow?.name || 'Untitled Workflow');
+    setEditingNameValue(workflow?.name || "Untitled Workflow");
     setIsEditingName(true);
   }, [workflow]);
 
-  // Handle workflow name save
   const handleNameSave = useCallback(() => {
     if (!workflow || !editingNameValue.trim()) return;
     dispatch(
@@ -170,25 +154,25 @@ export default function WorkflowEditor() {
     setIsEditingName(false);
   }, [workflow, editingNameValue, dispatch]);
 
-  // Start editing workflow description
   const startEditingDescription = useCallback(() => {
-    setEditingDescriptionValue(workflow?.description || '');
+    setEditingDescriptionValue(workflow?.description || "");
     setIsEditingDescription(true);
   }, [workflow]);
 
-  // Handle workflow description save
   const handleDescriptionSave = useCallback(() => {
     if (!workflow) return;
     dispatch(
-      updateWorkflow({ id: workflow.id, description: editingDescriptionValue.trim() })
+      updateWorkflow({
+        id: workflow.id,
+        description: editingDescriptionValue.trim(),
+      })
     );
     setIsEditingDescription(false);
   }, [workflow, editingDescriptionValue, dispatch]);
 
-  // Handle explicit save button click
   const handleSave = useCallback(() => {
     if (!workflow) return;
-    setSaveStatus('saving');
+    setSaveStatus("saving");
     dispatch(setStoreNodes(nodes));
     dispatch(setStoreEdges(edges));
     if (editingNameValue.trim()) {
@@ -196,16 +180,14 @@ export default function WorkflowEditor() {
         updateWorkflow({ id: workflow.id, name: editingNameValue.trim() })
       );
     }
-    setTimeout(() => setSaveStatus('saved'), 500);
+    setTimeout(() => setSaveStatus("saved"), 500);
   }, [workflow, nodes, edges, editingNameValue, dispatch]);
 
-  // Toggle workflow enabled status
   const handleToggleEnabled = useCallback(() => {
     if (!workflow) return;
     dispatch(toggleWorkflowEnabled(workflow.id));
   }, [workflow, dispatch]);
 
-  // Run simulation
   const handleRunSimulation = useCallback(() => {
     if (!workflow) return;
     const workflowWithCurrentNodes: Workflow = {
@@ -216,17 +198,15 @@ export default function WorkflowEditor() {
     runSimulation(workflowWithCurrentNodes);
   }, [workflow, nodes, edges, runSimulation]);
 
-  // Get display values
-  const displayName = workflow?.name || 'Untitled Workflow';
+  const displayName = workflow?.name || "Untitled Workflow";
   const displayDescription =
-    workflow?.description || 'Configure device monitoring rules and actions';
+    workflow?.description || "Configure device monitoring rules and actions";
 
   const onConnect = useCallback(
     (connection: Connection) => setEdges((eds) => addEdge(connection, eds)),
     [setEdges]
   );
 
-  // Handle "Add Node" button click - opens modal with defaults
   const handleAddNodeClick = useCallback((nodeType: NodeType) => {
     setPendingNodeType(nodeType);
     setEditingNodeId(null);
@@ -234,7 +214,6 @@ export default function WorkflowEditor() {
     setIsModalOpen(true);
   }, []);
 
-  // Handle node double-click - opens modal for editing
   const handleNodeDoubleClick: NodeMouseHandler = useCallback(
     (_event, node) => {
       setPendingNodeType(node.type as NodeType);
@@ -245,16 +224,13 @@ export default function WorkflowEditor() {
     []
   );
 
-  // Handle modal submit - create new or update existing node
   const handleModalSubmit = useCallback(
     (values: WorkflowNodeData) => {
       if (editingNodeId) {
-        // Update existing node
         setNodes((nds) =>
           nds.map((n) => (n.id === editingNodeId ? { ...n, data: values } : n))
         );
       } else if (pendingNodeType) {
-        // Create new node
         const newNode: Node = {
           id: `node-${Date.now()}`,
           type: pendingNodeType,
@@ -270,7 +246,6 @@ export default function WorkflowEditor() {
     [editingNodeId, pendingNodeType, setNodes]
   );
 
-  // Handle modal close
   const handleModalClose = useCallback(() => {
     setIsModalOpen(false);
     setPendingNodeType(null);
@@ -278,7 +253,6 @@ export default function WorkflowEditor() {
     setModalInitialValues({});
   }, []);
 
-  // Delete selected nodes/edges
   const deleteSelected = useCallback(() => {
     setNodes((nds) => nds.filter((n) => !n.selected));
     setEdges((eds) => eds.filter((e) => !e.selected));
@@ -288,17 +262,16 @@ export default function WorkflowEditor() {
     // Deselect when clicking pane
   }, []);
 
-  // Handle case where workflow doesn't exist
   if (!workflow && !isNewWorkflow) {
     return (
-      <div className="h-screen flex items-center justify-center">
+      <div className="h-screen flex items-center justify-center bg-background">
         <div className="text-center">
-          <h1 className="text-xl font-bold text-gray-800 mb-2">
+          <h1 className="text-xl font-bold text-foreground mb-2">
             Workflow not found
           </h1>
           <button
-            onClick={() => navigate('/')}
-            className="text-emerald-600 hover:underline"
+            onClick={() => navigate("/")}
+            className="text-primary hover:underline"
           >
             Back to Dashboard
           </button>
@@ -308,16 +281,16 @@ export default function WorkflowEditor() {
   }
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="h-screen flex flex-col bg-background">
       {/* Header */}
-      <div className="p-4 bg-gray-100 border-b border-gray-200">
+      <div className="p-4 bg-card border-b border-border">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
-              onClick={() => navigate('/')}
-              className="p-1 hover:bg-gray-200 rounded"
+              onClick={() => navigate("/")}
+              className="p-1 hover:bg-muted rounded transition-colors"
             >
-              <ArrowLeft size={20} className="text-gray-600" />
+              <ArrowLeft size={20} className="text-muted-foreground" />
             </button>
             <div>
               {isEditingName ? (
@@ -329,21 +302,21 @@ export default function WorkflowEditor() {
                     onChange={(e) => setEditingNameValue(e.target.value)}
                     onBlur={handleNameSave}
                     onKeyDown={(e) => {
-                      if (e.key === 'Enter') handleNameSave();
-                      if (e.key === 'Escape') setIsEditingName(false);
+                      if (e.key === "Enter") handleNameSave();
+                      if (e.key === "Escape") setIsEditingName(false);
                     }}
-                    className="text-xl font-bold text-gray-800 bg-white px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="text-xl font-bold text-foreground bg-card px-2 py-1 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
                   />
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
-                  <h1 className="text-xl font-bold text-gray-800">
+                  <h1 className="text-xl font-bold text-foreground">
                     {displayName}
                   </h1>
                   {workflow && (
                     <button
                       onClick={startEditingName}
-                      className="p-1 hover:bg-gray-200 rounded text-gray-400 hover:text-gray-600"
+                      className="p-1 hover:bg-muted rounded text-muted-foreground hover:text-foreground transition-colors"
                     >
                       <Pencil size={16} />
                     </button>
@@ -356,25 +329,27 @@ export default function WorkflowEditor() {
                     ref={descriptionInputRef}
                     type="text"
                     value={editingDescriptionValue}
-                    onChange={(e) => setEditingDescriptionValue(e.target.value)}
+                    onChange={(e) =>
+                      setEditingDescriptionValue(e.target.value)
+                    }
                     onBlur={handleDescriptionSave}
                     onKeyDown={(e) => {
-                      if (e.key === 'Enter') handleDescriptionSave();
-                      if (e.key === 'Escape') setIsEditingDescription(false);
+                      if (e.key === "Enter") handleDescriptionSave();
+                      if (e.key === "Escape") setIsEditingDescription(false);
                     }}
                     placeholder="Add workflow description..."
-                    className="text-sm text-gray-500 bg-white px-2 py-0.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 min-w-[300px]"
+                    className="text-sm text-muted-foreground bg-card px-2 py-0.5 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring min-w-[300px]"
                   />
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
-                  <p className="text-sm text-gray-500">
-                    {displayDescription || 'No description'}
+                  <p className="text-sm text-muted-foreground">
+                    {displayDescription || "No description"}
                   </p>
                   {workflow && (
                     <button
                       onClick={startEditingDescription}
-                      className="p-0.5 hover:bg-gray-200 rounded text-gray-400 hover:text-gray-600"
+                      className="p-0.5 hover:bg-muted rounded text-muted-foreground hover:text-foreground transition-colors"
                     >
                       <Pencil size={12} />
                     </button>
@@ -386,50 +361,47 @@ export default function WorkflowEditor() {
 
           {workflow && (
             <div className="flex items-center gap-3">
-              {/* Run Simulation button */}
               <button
                 onClick={handleRunSimulation}
                 disabled={isSimulationRunning}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Play size={16} />
-                {isSimulationRunning ? 'Running...' : 'Run Simulation'}
+                {isSimulationRunning ? "Running..." : "Run Simulation"}
               </button>
 
-              {/* Enabled toggle */}
               <button
                 onClick={handleToggleEnabled}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm ${
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-colors ${
                   workflow.enabled
-                    ? 'bg-emerald-100 text-emerald-700'
-                    : 'bg-gray-100 text-gray-500'
+                    ? "bg-success/15 text-success"
+                    : "bg-muted text-muted-foreground"
                 }`}
               >
                 <Power size={14} />
-                {workflow.enabled ? 'Enabled' : 'Disabled'}
+                {workflow.enabled ? "Enabled" : "Disabled"}
               </button>
 
-              {/* Save status */}
               <span
                 className={`text-sm flex items-center gap-1 ${
-                  saveStatus === 'saved'
-                    ? 'text-emerald-600'
-                    : saveStatus === 'saving'
-                      ? 'text-amber-500'
-                      : 'text-gray-400'
+                  saveStatus === "saved"
+                    ? "text-success"
+                    : saveStatus === "saving"
+                      ? "text-warning"
+                      : "text-muted-foreground"
                 }`}
               >
-                {saveStatus === 'saved' && <Check size={16} />}
-                {saveStatus === 'saved'
-                  ? 'Saved'
-                  : saveStatus === 'saving'
-                    ? 'Saving...'
-                    : 'Unsaved'}
+                {saveStatus === "saved" && <Check size={16} />}
+                {saveStatus === "saved"
+                  ? "Saved"
+                  : saveStatus === "saving"
+                    ? "Saving..."
+                    : "Unsaved"}
               </span>
 
               <button
                 onClick={handleSave}
-                className="flex items-center gap-2 px-4 py-2 bg-emerald-500 text-white rounded-md text-sm hover:bg-emerald-600"
+                className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm hover:bg-secondary transition-colors"
               >
                 <Save size={16} />
                 Save
@@ -440,36 +412,41 @@ export default function WorkflowEditor() {
       </div>
 
       {/* Toolbar */}
-      <div className="p-3 bg-white border-b border-gray-200 flex gap-2 items-center flex-wrap">
-        <span className="text-sm text-gray-500 mr-2">Add:</span>
-        {(Object.entries(NODE_CONFIG) as [NodeType, (typeof NODE_CONFIG)[NodeType]][]).map(
-          ([type, config]) => (
-            <button
-              key={type}
-              onClick={() => handleAddNodeClick(type)}
-              className="px-3 py-1.5 text-sm rounded-md border transition-colors"
-              style={{
-                borderColor: config.color,
-                color: config.color,
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = config.color;
-                e.currentTarget.style.color = 'white';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-                e.currentTarget.style.color = config.color;
-              }}
-            >
-              {config.label}
-            </button>
-          )
-        )}
+      <div className="p-3 bg-card border-b border-border flex gap-2 items-center flex-wrap">
+        <span className="text-sm text-muted-foreground mr-2">Add:</span>
+        {(
+          Object.entries(NODE_CONFIG) as [
+            NodeType,
+            (typeof NODE_CONFIG)[NodeType],
+          ][]
+        ).map(([type, config]) => (
+          <button
+            key={type}
+            onClick={() => handleAddNodeClick(type)}
+            className="px-3 py-1.5 text-sm rounded-md border transition-colors"
+            style={{
+              borderColor: config.color,
+              color: config.color,
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = config.color;
+              e.currentTarget.style.color = "white";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "transparent";
+              e.currentTarget.style.color = config.color;
+            }}
+          >
+            {config.label}
+          </button>
+        ))}
         <div className="flex-1" />
         <button
           onClick={deleteSelected}
-          disabled={!nodes.some((n) => n.selected) && !edges.some((e) => e.selected)}
-          className="px-4 py-1.5 bg-red-500 text-white rounded-md text-sm hover:bg-red-600 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:text-gray-500"
+          disabled={
+            !nodes.some((n) => n.selected) && !edges.some((e) => e.selected)
+          }
+          className="px-4 py-1.5 bg-destructive text-destructive-foreground rounded-md text-sm hover:opacity-90 transition-opacity disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed"
         >
           Delete Selected
         </button>
@@ -493,7 +470,7 @@ export default function WorkflowEditor() {
           <MiniMap
             nodeColor={(node: Node) => {
               const config = NODE_CONFIG[node.type as NodeType];
-              return config?.color || '#e5e7eb';
+              return config?.color || "#e5e7eb";
             }}
             maskColor="rgba(0, 0, 0, 0.1)"
           />
@@ -501,7 +478,6 @@ export default function WorkflowEditor() {
         </ReactFlow>
       </div>
 
-      {/* Node Form Modal */}
       <NodeFormModal
         isOpen={isModalOpen}
         onClose={handleModalClose}
@@ -510,7 +486,6 @@ export default function WorkflowEditor() {
         onSubmit={handleModalSubmit}
       />
 
-      {/* Simulation Modal */}
       <SimulationModal
         isOpen={isSimulationRunning}
         onClose={resetSimulation}

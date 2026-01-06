@@ -28,6 +28,11 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -47,72 +52,134 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  /* Base radius */
+  --radius: 0.375rem;
+
+  /* Backgrounds */
+  --background: #f9fafb;
+  --foreground: #1f2936;
+
+  /* Cards */
+  --card: #ffffff;
+  --card-foreground: #1f2936;
+
+  /* Popovers */
+  --popover: #ffffff;
+  --popover-foreground: #1f2936;
+
+  /* Primary - Digital Cockpit Blue */
+  --primary: #00aaff;
+  --primary-foreground: #f2f4f7;
+
+  /* Secondary - Digital Cockpit Teal */
+  --secondary: #3cc2c0;
+  --secondary-foreground: #ffffff;
+
+  /* Muted */
+  --muted: #f3f4f6;
+  --muted-foreground: #6b7280;
+
+  /* Accent */
+  --accent: #ebf4ff;
+  --accent-foreground: #1f2936;
+
+  /* Semantic - Destructive */
+  --destructive: #e24a4a;
+  --destructive-foreground: #ffffff;
+
+  /* Semantic - Success */
+  --success: #6fce34;
+  --success-foreground: #ffffff;
+
+  /* Semantic - Warning */
+  --warning: #f59e0b;
+  --warning-foreground: #ffffff;
+
+  /* Borders & Inputs */
+  --border: #9daec644;
+  --input: #d0d5dd;
+  --ring: #00aaff;
+
+  /* Charts */
+  --chart-1: #00aaff;
+  --chart-2: #3cc2c0;
+  --chart-3: #6fce34;
+  --chart-4: #f59e0b;
+  --chart-5: #e24a4a;
+
+  /* Sidebar */
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1f2936;
+  --sidebar-primary: #00aaff;
+  --sidebar-primary-foreground: #f2f4f7;
+  --sidebar-accent: #ebf4ff;
+  --sidebar-accent-foreground: #1f2936;
+  --sidebar-border: #9daec644;
+  --sidebar-ring: #00aaff;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* Backgrounds */
+  --background: #051936;
+  --foreground: #f1f5f9;
+
+  /* Cards */
+  --card: #1a3156;
+  --card-foreground: #f1f5f9;
+
+  /* Popovers */
+  --popover: #1a3156;
+  --popover-foreground: #f1f5f9;
+
+  /* Primary - stays consistent */
+  --primary: #00aaff;
+  --primary-foreground: #f2f4f7;
+
+  /* Secondary */
+  --secondary: #3cc2c0;
+  --secondary-foreground: #ffffff;
+
+  /* Muted */
+  --muted: #1a3156;
+  --muted-foreground: #a0aec0;
+
+  /* Accent */
+  --accent: #1a406e;
+  --accent-foreground: #f1f5f9;
+
+  /* Semantic - Destructive (brighter for dark mode) */
+  --destructive: #ff6b6b;
+  --destructive-foreground: #ffffff;
+
+  /* Semantic - Success */
+  --success: #6fce34;
+  --success-foreground: #ffffff;
+
+  /* Semantic - Warning */
+  --warning: #f59e0b;
+  --warning-foreground: #ffffff;
+
+  /* Borders & Inputs */
+  --border: #9daec644;
+  --input: #1a406e;
+  --ring: #00aaff;
+
+  /* Charts */
+  --chart-1: #00aaff;
+  --chart-2: #3cc2c0;
+  --chart-3: #6fce34;
+  --chart-4: #f59e0b;
+  --chart-5: #ff6b6b;
+
+  /* Sidebar */
+  --sidebar: #1456a7;
+  --sidebar-foreground: #f1f5f9;
+  --sidebar-primary: #00aaff;
+  --sidebar-primary-foreground: #f2f4f7;
+  --sidebar-accent: #1a406e;
+  --sidebar-accent-foreground: #f1f5f9;
+  --sidebar-border: #9daec644;
+  --sidebar-ring: #00aaff;
 }
 
 @layer base {
@@ -120,6 +187,72 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
   }
+}
+
+/* ReactFlow theme overrides - use !important to override reactflow/dist/style.css */
+.react-flow {
+  background: var(--background) !important;
+}
+
+.react-flow__background {
+  background: var(--background) !important;
+}
+
+.react-flow__background pattern circle {
+  fill: var(--muted-foreground) !important;
+}
+
+.react-flow__controls {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+}
+
+.react-flow__controls-button {
+  background: var(--card) !important;
+  border-bottom: 1px solid var(--border) !important;
+  fill: var(--muted-foreground) !important;
+  transition: all 0.15s ease-in-out;
+}
+
+.react-flow__controls-button:hover {
+  background: var(--muted) !important;
+  fill: var(--foreground) !important;
+}
+
+.react-flow__controls-button:disabled {
+  fill: var(--muted-foreground) !important;
+  opacity: 0.5;
+}
+
+.react-flow__controls-button:last-child {
+  border-bottom: none !important;
+}
+
+.react-flow__controls-button svg {
+  fill: inherit !important;
+}
+
+.react-flow__minimap {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+}
+
+.react-flow__minimap-mask {
+  fill: var(--background) !important;
+  opacity: 0.6 !important;
+}
+
+.react-flow__attribution {
+  background: var(--card) !important;
+  color: var(--muted-foreground) !important;
+}
+
+.react-flow__attribution a {
+  color: var(--primary) !important;
 }

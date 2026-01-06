@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import {
   Play,
   Trash2,
@@ -6,20 +6,22 @@ import {
   GitBranch,
   Mail,
   MessageSquare,
-} from 'lucide-react';
-import useSimulation from '@/hooks/useSimulation';
-import SimulationModal from './SimulationModal';
-import type { Workflow } from '@/types';
+} from "lucide-react";
+import useSimulation from "@/hooks/useSimulation";
+import SimulationModal from "./SimulationModal";
+import type { Workflow } from "@/types";
 
 interface WorkflowCardProps {
   workflow: Workflow;
   onDelete: () => void;
 }
 
-export default function WorkflowCard({ workflow, onDelete }: WorkflowCardProps) {
+export default function WorkflowCard({
+  workflow,
+  onDelete,
+}: WorkflowCardProps) {
   const navigate = useNavigate();
 
-  // Simulation hook
   const {
     isRunning: isSimulationRunning,
     currentStep,
@@ -29,12 +31,11 @@ export default function WorkflowCard({ workflow, onDelete }: WorkflowCardProps) 
     resetSimulation,
   } = useSimulation();
 
-  // Count nodes by type
   const rulesCount =
-    workflow.nodes?.filter((n) => n.type === 'rule').length || 0;
+    workflow.nodes?.filter((n) => n.type === "rule").length || 0;
   const actionsCount =
     workflow.nodes?.filter(
-      (n) => n.type === 'emailAction' || n.type === 'smsAction'
+      (n) => n.type === "emailAction" || n.type === "smsAction"
     ).length || 0;
 
   const handleRun = () => {
@@ -43,51 +44,50 @@ export default function WorkflowCard({ workflow, onDelete }: WorkflowCardProps) 
 
   return (
     <>
-      <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-sm transition-shadow">
+      <div className="bg-card border border-border rounded-lg p-4 hover:shadow-md transition-shadow">
         <div className="flex items-start justify-between">
           <div className="flex gap-3">
             <div
               className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                workflow.enabled ? 'bg-emerald-100' : 'bg-gray-100'
+                workflow.enabled
+                  ? "bg-success/15 text-success"
+                  : "bg-muted text-muted-foreground"
               }`}
             >
-              <Play
-                size={18}
-                className={`ml-0.5 ${
-                  workflow.enabled ? 'text-emerald-600' : 'text-gray-400'
-                }`}
-              />
+              <Play size={18} className="ml-0.5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-medium text-gray-900">{workflow.name}</h3>
+                <h3 className="font-medium text-card-foreground">
+                  {workflow.name}
+                </h3>
                 <span
-                  className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs ${
+                  className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
                     workflow.enabled
-                      ? 'bg-emerald-100 text-emerald-700'
-                      : 'bg-gray-100 text-gray-500'
+                      ? "bg-success/15 text-success"
+                      : "bg-muted text-muted-foreground"
                   }`}
                 >
                   <Power size={10} />
-                  {workflow.enabled ? 'Enabled' : 'Disabled'}
+                  {workflow.enabled ? "Enabled" : "Disabled"}
                 </span>
               </div>
 
               {workflow.description && (
-                <p className="text-sm text-gray-500 mt-0.5">
+                <p className="text-sm text-muted-foreground mt-0.5">
                   {workflow.description}
                 </p>
               )}
 
-              <div className="flex items-center gap-3 text-sm text-gray-500 mt-2">
+              <div className="flex items-center gap-3 text-sm text-muted-foreground mt-2">
                 <span className="flex items-center gap-1">
-                  <GitBranch size={14} className="text-amber-500" />
-                  {rulesCount} {rulesCount === 1 ? 'rule' : 'rules'}
+                  <GitBranch size={14} className="text-warning" />
+                  {rulesCount} {rulesCount === 1 ? "rule" : "rules"}
                 </span>
                 <span className="flex items-center gap-1">
-                  <Mail size={14} className="text-emerald-500" />
-                  <MessageSquare size={14} className="text-violet-500" />
-                  {actionsCount} {actionsCount === 1 ? 'action' : 'actions'}
+                  <Mail size={14} className="text-success" />
+                  <MessageSquare size={14} className="text-chart-5" />
+                  {actionsCount} {actionsCount === 1 ? "action" : "actions"}
                 </span>
               </div>
             </div>
@@ -97,19 +97,19 @@ export default function WorkflowCard({ workflow, onDelete }: WorkflowCardProps) 
             <button
               onClick={handleRun}
               disabled={isSimulationRunning}
-              className="px-3 py-1.5 text-sm text-blue-600 hover:bg-blue-50 rounded disabled:opacity-50"
+              className="px-3 py-1.5 text-sm text-primary hover:bg-accent rounded transition-colors disabled:opacity-50"
             >
               Run
             </button>
             <button
               onClick={() => navigate(`/workflow/${workflow.id}`)}
-              className="px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded"
+              className="px-3 py-1.5 text-sm text-muted-foreground hover:bg-muted hover:text-foreground rounded transition-colors"
             >
               Edit
             </button>
             <button
               onClick={onDelete}
-              className="p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-500 rounded"
+              className="p-1.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive rounded transition-colors"
             >
               <Trash2 size={16} />
             </button>
@@ -117,7 +117,6 @@ export default function WorkflowCard({ workflow, onDelete }: WorkflowCardProps) 
         </div>
       </div>
 
-      {/* Simulation Modal */}
       <SimulationModal
         isOpen={isSimulationRunning}
         onClose={resetSimulation}
