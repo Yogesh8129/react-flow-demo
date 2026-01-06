@@ -1,4 +1,4 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore } from '@reduxjs/toolkit';
 import {
   persistStore,
   persistReducer,
@@ -8,12 +8,12 @@ import {
   PERSIST,
   PURGE,
   REGISTER,
-} from "redux-persist";
-import storage from "redux-persist/lib/storage";
-import workflowsReducer from "./workflowsSlice";
+} from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import workflowsReducer from './workflowsSlice';
 
 const persistConfig = {
-  key: "telematrix",
+  key: 'telematrix',
   version: 1,
   storage,
 };
@@ -33,3 +33,7 @@ export const store = configureStore({
 });
 
 export const persistor = persistStore(store);
+
+// Type exports for use throughout the app
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;

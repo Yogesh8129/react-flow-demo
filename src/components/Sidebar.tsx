@@ -1,9 +1,15 @@
-import { NavLink } from "react-router-dom";
-import { Home, GitBranch } from "lucide-react";
+import { NavLink } from 'react-router-dom';
+import { Home, GitBranch, type LucideIcon } from 'lucide-react';
 
-const navItems = [
-  { to: "/", icon: Home, label: "Home" },
-  { to: "/", icon: GitBranch, label: "Workflows" },
+interface NavItem {
+  to: string;
+  icon: LucideIcon;
+  label: string;
+}
+
+const navItems: NavItem[] = [
+  { to: '/', icon: Home, label: 'Home' },
+  { to: '/', icon: GitBranch, label: 'Workflows' },
 ];
 
 export default function Sidebar() {
@@ -26,8 +32,8 @@ export default function Sidebar() {
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2 rounded-lg text-sm ${
                 isActive
-                  ? "bg-emerald-50 text-emerald-700"
-                  : "text-gray-600 hover:bg-gray-50"
+                  ? 'bg-emerald-50 text-emerald-700'
+                  : 'text-gray-600 hover:bg-gray-50'
               }`
             }
           >

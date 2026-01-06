@@ -1,17 +1,24 @@
-import { useState } from "react";
-import { X } from "lucide-react";
+import { useState, type KeyboardEvent } from 'react';
+import { X } from 'lucide-react';
+
+interface TagInputProps {
+  value: string[];
+  onChange: (tags: string[]) => void;
+  placeholder?: string;
+  validate?: (value: string) => string | null;
+}
 
 export default function TagInput({
   value = [],
   onChange,
-  placeholder = "Type and press Enter",
+  placeholder = 'Type and press Enter',
   validate,
-}) {
-  const [inputValue, setInputValue] = useState("");
-  const [error, setError] = useState("");
+}: TagInputProps) {
+  const [inputValue, setInputValue] = useState('');
+  const [error, setError] = useState('');
 
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
       e.preventDefault();
       addTag();
     }
@@ -23,7 +30,7 @@ export default function TagInput({
 
     // Check for duplicates
     if (value.includes(trimmed)) {
-      setError("Already added");
+      setError('Already added');
       return;
     }
 
@@ -37,11 +44,11 @@ export default function TagInput({
     }
 
     onChange([...value, trimmed]);
-    setInputValue("");
-    setError("");
+    setInputValue('');
+    setError('');
   };
 
-  const removeTag = (indexToRemove) => {
+  const removeTag = (indexToRemove: number) => {
     onChange(value.filter((_, index) => index !== indexToRemove));
   };
 
@@ -68,11 +75,11 @@ export default function TagInput({
           value={inputValue}
           onChange={(e) => {
             setInputValue(e.target.value);
-            setError("");
+            setError('');
           }}
           onKeyDown={handleKeyDown}
           onBlur={addTag}
-          placeholder={value.length === 0 ? placeholder : ""}
+          placeholder={value.length === 0 ? placeholder : ''}
           className="flex-1 min-w-[120px] outline-none text-sm"
         />
       </div>

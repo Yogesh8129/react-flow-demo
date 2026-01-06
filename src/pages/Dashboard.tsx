@@ -1,28 +1,34 @@
-import { useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { Plus } from "lucide-react";
-import Sidebar from "../components/Sidebar";
-import WorkflowCard from "../components/WorkflowCard";
-import { selectWorkflows, deleteWorkflow, addWorkflow } from "../store/workflowsSlice";
+import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { Plus } from 'lucide-react';
+import Sidebar from '../components/Sidebar';
+import WorkflowCard from '../components/WorkflowCard';
+import {
+  selectWorkflows,
+  deleteWorkflow,
+  addWorkflow,
+} from '../store/workflowsSlice';
+import type { RootState } from '../store';
+import type { Workflow } from '@/types';
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const workflows = useSelector(selectWorkflows);
+  const workflows = useSelector((state: RootState) => selectWorkflows(state));
 
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this workflow?")) {
+  const handleDelete = (id: string) => {
+    if (window.confirm('Are you sure you want to delete this workflow?')) {
       dispatch(deleteWorkflow(id));
     }
   };
 
   const handleCreateWorkflow = () => {
     const newId = `workflow-${Date.now()}`;
-    const newWorkflow = {
+    const newWorkflow: Workflow = {
       id: newId,
-      name: "Untitled Workflow",
-      description: "",
-      enabled: false, // Start disabled until configured
+      name: 'Untitled Workflow',
+      description: '',
+      enabled: false,
       nodes: [],
       edges: [],
     };
@@ -38,9 +44,15 @@ export default function Dashboard() {
         <div className="p-6 border-b border-gray-200 bg-white">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-sm text-gray-500 mb-1">Home → Alert Workflows</div>
-              <h1 className="text-2xl font-bold text-gray-900">Alert Workflows</h1>
-              <p className="text-gray-500 text-sm">Configure telemetry monitoring rules and actions</p>
+              <div className="text-sm text-gray-500 mb-1">
+                Home → Alert Workflows
+              </div>
+              <h1 className="text-2xl font-bold text-gray-900">
+                Alert Workflows
+              </h1>
+              <p className="text-gray-500 text-sm">
+                Configure telemetry monitoring rules and actions
+              </p>
             </div>
             <button
               onClick={handleCreateWorkflow}

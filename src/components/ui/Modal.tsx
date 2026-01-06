@@ -1,22 +1,29 @@
-import { useEffect, useCallback } from "react";
-import { X } from "lucide-react";
+import { useEffect, useCallback, type ReactNode } from 'react';
+import { X } from 'lucide-react';
 
-export default function Modal({ isOpen, onClose, title, children }) {
+interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  title: string;
+  children: ReactNode;
+}
+
+export default function Modal({ isOpen, onClose, title, children }: ModalProps) {
   const handleEscape = useCallback(
-    (e) => {
-      if (e.key === "Escape") onClose();
+    (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
     },
     [onClose]
   );
 
   useEffect(() => {
     if (isOpen) {
-      document.addEventListener("keydown", handleEscape);
-      document.body.style.overflow = "hidden";
+      document.addEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'hidden';
     }
     return () => {
-      document.removeEventListener("keydown", handleEscape);
-      document.body.style.overflow = "unset";
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
     };
   }, [isOpen, handleEscape]);
 

@@ -1,29 +1,34 @@
-import { memo } from "react";
-import { Position } from "reactflow";
-import { Mail } from "lucide-react";
+import { memo } from 'react';
+import { Position } from 'reactflow';
+import { MessageSquare } from 'lucide-react';
 import {
   BaseNode,
   BaseNodeHeader,
   BaseNodeHeaderTitle,
   BaseNodeContent,
-} from "../base-node";
-import { BaseHandle } from "../base-handle";
+} from '../base-node';
+import { BaseHandle } from '../base-handle';
+import type { SmsActionNodeData } from '@/types';
 
-function EmailActionNode({ data }) {
-  const { recipients = [], template_id = "" } = data;
+interface SmsActionNodeProps {
+  data: SmsActionNodeData;
+}
+
+function SmsActionNode({ data }: SmsActionNodeProps) {
+  const { recipients = [], template_id = '' } = data;
 
   return (
     <BaseNode
       className="w-[220px] border-l-4"
-      style={{ borderLeftColor: "#10b981" }}
+      style={{ borderLeftColor: '#8b5cf6' }}
     >
       {/* Input handle only (left side) */}
       <BaseHandle type="target" position={Position.Left} id="left" />
 
-      <BaseNodeHeader className="bg-emerald-50">
-        <Mail size={16} className="text-emerald-600" />
-        <BaseNodeHeaderTitle className="text-emerald-900 text-sm">
-          Email Action
+      <BaseNodeHeader className="bg-violet-50">
+        <MessageSquare size={16} className="text-violet-600" />
+        <BaseNodeHeaderTitle className="text-violet-900 text-sm">
+          SMS Action
         </BaseNodeHeaderTitle>
       </BaseNodeHeader>
 
@@ -31,12 +36,12 @@ function EmailActionNode({ data }) {
         {recipients.length > 0 ? (
           <div className="space-y-2">
             <div className="flex flex-wrap gap-1">
-              {recipients.slice(0, 2).map((email, index) => (
+              {recipients.slice(0, 2).map((phone, index) => (
                 <span
                   key={index}
-                  className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs rounded truncate max-w-[180px]"
+                  className="px-2 py-0.5 bg-violet-100 text-violet-700 text-xs rounded"
                 >
-                  {email}
+                  {phone}
                 </span>
               ))}
               {recipients.length > 2 && (
@@ -59,4 +64,4 @@ function EmailActionNode({ data }) {
   );
 }
 
-export default memo(EmailActionNode);
+export default memo(SmsActionNode);

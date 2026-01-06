@@ -1,16 +1,22 @@
-import FormField from "../ui/FormField";
-import TagInput from "../ui/TagInput";
+import type { FormikProps } from 'formik';
+import FormField from '../ui/FormField';
+import TagInput from '../ui/TagInput';
+import type { EmailActionNodeData } from '@/types';
 
-// Simple email validation
-const validateEmail = (email) => {
+/** Simple email validation */
+const validateEmail = (email: string): string | null => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
-    return "Invalid email format";
+    return 'Invalid email format';
   }
   return null;
 };
 
-export default function EmailActionForm({ formik }) {
+interface EmailActionFormProps {
+  formik: FormikProps<EmailActionNodeData>;
+}
+
+export default function EmailActionForm({ formik }: EmailActionFormProps) {
   const { values, errors, touched, handleChange, handleBlur } = formik;
 
   return (
@@ -18,11 +24,11 @@ export default function EmailActionForm({ formik }) {
       <FormField
         label="Recipients"
         name="recipients"
-        error={touched.recipients && errors.recipients}
+        error={touched.recipients ? (errors.recipients as string) : undefined}
       >
         <TagInput
           value={values.recipients || []}
-          onChange={(recipients) => formik.setFieldValue("recipients", recipients)}
+          onChange={(recipients) => formik.setFieldValue('recipients', recipients)}
           placeholder="Enter email addresses"
           validate={validateEmail}
         />
@@ -31,7 +37,7 @@ export default function EmailActionForm({ formik }) {
       <FormField
         label="Template ID"
         name="template_id"
-        error={touched.template_id && errors.template_id}
+        error={touched.template_id ? errors.template_id : undefined}
       >
         <input
           id="template_id"

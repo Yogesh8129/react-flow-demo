@@ -1,9 +1,22 @@
-import { useNavigate } from "react-router-dom";
-import { Play, Trash2, Power, GitBranch, Mail, MessageSquare } from "lucide-react";
-import useSimulation from "../hooks/useSimulation";
-import SimulationModal from "./SimulationModal";
+import { useNavigate } from 'react-router-dom';
+import {
+  Play,
+  Trash2,
+  Power,
+  GitBranch,
+  Mail,
+  MessageSquare,
+} from 'lucide-react';
+import useSimulation from '@/hooks/useSimulation';
+import SimulationModal from './SimulationModal';
+import type { Workflow } from '@/types';
 
-export default function WorkflowCard({ workflow, onDelete }) {
+interface WorkflowCardProps {
+  workflow: Workflow;
+  onDelete: () => void;
+}
+
+export default function WorkflowCard({ workflow, onDelete }: WorkflowCardProps) {
   const navigate = useNavigate();
 
   // Simulation hook
@@ -17,10 +30,11 @@ export default function WorkflowCard({ workflow, onDelete }) {
   } = useSimulation();
 
   // Count nodes by type
-  const rulesCount = workflow.nodes?.filter((n) => n.type === "rule").length || 0;
+  const rulesCount =
+    workflow.nodes?.filter((n) => n.type === 'rule').length || 0;
   const actionsCount =
     workflow.nodes?.filter(
-      (n) => n.type === "emailAction" || n.type === "smsAction"
+      (n) => n.type === 'emailAction' || n.type === 'smsAction'
     ).length || 0;
 
   const handleRun = () => {
@@ -34,13 +48,13 @@ export default function WorkflowCard({ workflow, onDelete }) {
           <div className="flex gap-3">
             <div
               className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                workflow.enabled ? "bg-emerald-100" : "bg-gray-100"
+                workflow.enabled ? 'bg-emerald-100' : 'bg-gray-100'
               }`}
             >
               <Play
                 size={18}
                 className={`ml-0.5 ${
-                  workflow.enabled ? "text-emerald-600" : "text-gray-400"
+                  workflow.enabled ? 'text-emerald-600' : 'text-gray-400'
                 }`}
               />
             </div>
@@ -50,28 +64,30 @@ export default function WorkflowCard({ workflow, onDelete }) {
                 <span
                   className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs ${
                     workflow.enabled
-                      ? "bg-emerald-100 text-emerald-700"
-                      : "bg-gray-100 text-gray-500"
+                      ? 'bg-emerald-100 text-emerald-700'
+                      : 'bg-gray-100 text-gray-500'
                   }`}
                 >
                   <Power size={10} />
-                  {workflow.enabled ? "Enabled" : "Disabled"}
+                  {workflow.enabled ? 'Enabled' : 'Disabled'}
                 </span>
               </div>
 
               {workflow.description && (
-                <p className="text-sm text-gray-500 mt-0.5">{workflow.description}</p>
+                <p className="text-sm text-gray-500 mt-0.5">
+                  {workflow.description}
+                </p>
               )}
 
               <div className="flex items-center gap-3 text-sm text-gray-500 mt-2">
                 <span className="flex items-center gap-1">
                   <GitBranch size={14} className="text-amber-500" />
-                  {rulesCount} {rulesCount === 1 ? "rule" : "rules"}
+                  {rulesCount} {rulesCount === 1 ? 'rule' : 'rules'}
                 </span>
                 <span className="flex items-center gap-1">
                   <Mail size={14} className="text-emerald-500" />
                   <MessageSquare size={14} className="text-violet-500" />
-                  {actionsCount} {actionsCount === 1 ? "action" : "actions"}
+                  {actionsCount} {actionsCount === 1 ? 'action' : 'actions'}
                 </span>
               </div>
             </div>

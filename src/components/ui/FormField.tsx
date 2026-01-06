@@ -1,4 +1,13 @@
-export default function FormField({ label, name, error, children }) {
+import type { ReactNode } from 'react';
+
+interface FormFieldProps {
+  label: string;
+  name: string;
+  error?: string;
+  children: ReactNode;
+}
+
+export default function FormField({ label, name, error, children }: FormFieldProps) {
   return (
     <div className="mb-4">
       <label

@@ -1,10 +1,25 @@
+import type { ChangeEvent } from 'react';
+
+interface SelectOption {
+  value: string;
+  label: string;
+}
+
+interface FormSelectProps {
+  value: string;
+  onChange: (e: ChangeEvent<HTMLSelectElement>) => void;
+  options: SelectOption[];
+  placeholder?: string;
+  name?: string;
+}
+
 export default function FormSelect({
   value,
   onChange,
   options,
-  placeholder = "Select...",
+  placeholder = 'Select...',
   name,
-}) {
+}: FormSelectProps) {
   return (
     <select
       id={name}
