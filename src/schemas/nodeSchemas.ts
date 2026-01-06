@@ -72,14 +72,12 @@ export type RuleSchemaType = z.infer<typeof ruleSchema>;
 
 export const emailActionSchema = z.object({
   recipients: emailArray,
-  template_id: nonEmptyString,
 });
 
 export type EmailActionSchemaType = z.infer<typeof emailActionSchema>;
 
 export const smsActionSchema = z.object({
   recipients: phoneArray,
-  template_id: nonEmptyString,
 });
 
 export type SmsActionSchemaType = z.infer<typeof smsActionSchema>;
@@ -156,9 +154,9 @@ export function getSchemaDefaults(nodeType: NodeType): Record<string, unknown> {
         repeat_policy: { type: 'rate_limit', interval_seconds: 300 },
       };
     case 'emailAction':
-      return { recipients: [], template_id: '' };
+      return { recipients: [] };
     case 'smsAction':
-      return { recipients: [], template_id: '' };
+      return { recipients: [] };
     default:
       return {};
   }

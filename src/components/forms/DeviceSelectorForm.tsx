@@ -51,7 +51,7 @@ export default function DeviceSelectorForm({ formik }: DeviceSelectorFormProps) 
 
       {/* Plants multi-select */}
       <MultiSelect
-        label="Filter by Plants"
+        label="Select Plant"
         options={mockReferenceData.plants}
         value={values.plants ?? []}
         onChange={(selected) => {
@@ -63,25 +63,25 @@ export default function DeviceSelectorForm({ formik }: DeviceSelectorFormProps) 
 
       {/* Asset Types multi-select */}
       <MultiSelect
-        label="Filter by Asset Types"
+        label="Select Device Type"
         options={mockReferenceData.assetTypes}
         value={values.assetTypes ?? []}
         onChange={(selected) => {
           setFieldValue('assetTypes', selected);
         }}
-        searchPlaceholder="Search asset types..."
+        searchPlaceholder="Search device types..."
         defaultExpanded={values.assetTypes?.length > 0}
       />
 
       {/* Specific Assets multi-select */}
       <MultiSelect
-        label="Or Select Specific Assets"
+        label="Select Device"
         options={mockReferenceData.assets}
         value={values.assets ?? []}
         onChange={(selected) => {
           setFieldValue('assets', selected);
         }}
-        searchPlaceholder="Search assets..."
+        searchPlaceholder="Search devices..."
         defaultExpanded={values.assets?.length > 0}
       />
 
@@ -134,10 +134,10 @@ function SelectionSummary({ plants, assetTypes, assets }: SelectionSummaryProps)
           <SummaryRow label="Plants" items={plantLabels} />
         )}
         {assetTypeLabels.length > 0 && (
-          <SummaryRow label="Asset Types" items={assetTypeLabels} />
+          <SummaryRow label="Device Types" items={assetTypeLabels} />
         )}
         {assetLabels.length > 0 && (
-          <SummaryRow label="Assets" items={assetLabels} />
+          <SummaryRow label="Devices" items={assetLabels} />
         )}
       </div>
       {plants.length > 0 && assetTypes.length > 0 && (

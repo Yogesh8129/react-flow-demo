@@ -40,7 +40,7 @@ function isActionData(
   data: unknown
 ): data is EmailActionNodeData | SmsActionNodeData {
   const d = data as EmailActionNodeData;
-  return Array.isArray(d?.recipients) && typeof d?.template_id === 'string';
+  return Array.isArray(d?.recipients);
 }
 
 
@@ -113,7 +113,6 @@ function extractActions(nodes: WorkflowNode[]): Action[] {
       return {
         type: type as 'email' | 'sms',
         recipients: data.recipients,
-        template_id: data.template_id,
       };
     });
 }

@@ -81,8 +81,6 @@ export interface Action {
   type: ActionType;
   /** Email addresses or phone numbers */
   recipients: string[];
-  /** Server-side template identifier */
-  template_id: string;
 }
 
 // ============================================
@@ -124,13 +122,11 @@ export interface RuleNodeData extends Rule {}
 /** Data shape for Email Action node */
 export interface EmailActionNodeData {
   recipients: string[];
-  template_id: string;
 }
 
 /** Data shape for SMS Action node */
 export interface SmsActionNodeData {
   recipients: string[];
-  template_id: string;
 }
 
 /** Union of all possible node data shapes */

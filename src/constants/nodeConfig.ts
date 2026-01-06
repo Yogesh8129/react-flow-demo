@@ -124,13 +124,11 @@ export function getDefaultNodeData(nodeType: NodeType): WorkflowNodeData {
     case NODE_TYPES.EMAIL_ACTION:
       return {
         recipients: [],
-        template_id: '',
       } satisfies EmailActionNodeData;
 
     case NODE_TYPES.SMS_ACTION:
       return {
         recipients: [],
-        template_id: '',
       } satisfies SmsActionNodeData;
 
     default: {

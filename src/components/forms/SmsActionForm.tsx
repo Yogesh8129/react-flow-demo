@@ -17,7 +17,7 @@ interface SmsActionFormProps {
 }
 
 export default function SmsActionForm({ formik }: SmsActionFormProps) {
-  const { values, errors, touched, handleChange, handleBlur } = formik;
+  const { values, errors, touched } = formik;
 
   return (
     <div className="space-y-4">
@@ -34,22 +34,9 @@ export default function SmsActionForm({ formik }: SmsActionFormProps) {
         />
       </FormField>
 
-      <FormField
-        label="Template ID"
-        name="template_id"
-        error={touched.template_id ? errors.template_id : undefined}
-      >
-        <input
-          id="template_id"
-          name="template_id"
-          type="text"
-          value={values.template_id}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          placeholder="e.g., tmpl_overheat_sms"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-        />
-      </FormField>
+      <p className="text-xs text-gray-500">
+        Add phone numbers that will receive SMS alerts when this workflow triggers.
+      </p>
     </div>
   );
 }

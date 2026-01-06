@@ -57,7 +57,6 @@ const initialState: WorkflowsState = {
           position: { x: 700, y: 80 },
           data: {
             recipients: ['ops@example.com'],
-            template_id: 'tmpl_overheat',
           },
         },
         {
@@ -66,7 +65,6 @@ const initialState: WorkflowsState = {
           position: { x: 700, y: 220 },
           data: {
             recipients: ['+919876543210'],
-            template_id: 'tmpl_overheat_sms',
           },
         },
       ] as WorkflowNode[],

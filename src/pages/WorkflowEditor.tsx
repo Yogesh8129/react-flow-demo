@@ -83,11 +83,14 @@ export default function WorkflowEditor() {
   const [editingNodeId, setEditingNodeId] = useState<string | null>(null);
   const [modalInitialValues, setModalInitialValues] = useState<WorkflowNodeData | Record<string, never>>({});
 
-  // Workflow name editing
+  // Workflow name and description editing
   const [isEditingName, setIsEditingName] = useState(false);
   const [editingNameValue, setEditingNameValue] = useState('');
+  const [isEditingDescription, setIsEditingDescription] = useState(false);
+  const [editingDescriptionValue, setEditingDescriptionValue] = useState('');
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('saved');
   const nameInputRef = useRef<HTMLInputElement>(null);
+  const descriptionInputRef = useRef<HTMLInputElement>(null);
 
   // Simulation
   const {
@@ -144,6 +147,14 @@ export default function WorkflowEditor() {
     }
   }, [isEditingName]);
 
+  // Focus description input when editing starts
+  useEffect(() => {
+    if (isEditingDescription && descriptionInputRef.current) {
+      descriptionInputRef.current.focus();
+      descriptionInputRef.current.select();
+    }
+  }, [isEditingDescription]);
+
   // Start editing workflow name
   const startEditingName = useCallback(() => {
     setEditingNameValue(workflow?.name || 'Untitled Workflow');
@@ -158,6 +169,21 @@ export default function WorkflowEditor() {
     );
     setIsEditingName(false);
   }, [workflow, editingNameValue, dispatch]);
+
+  // Start editing workflow description
+  const startEditingDescription = useCallback(() => {
+    setEditingDescriptionValue(workflow?.description || '');
+    setIsEditingDescription(true);
+  }, [workflow]);
+
+  // Handle workflow description save
+  const handleDescriptionSave = useCallback(() => {
+    if (!workflow) return;
+    dispatch(
+      updateWorkflow({ id: workflow.id, description: editingDescriptionValue.trim() })
+    );
+    setIsEditingDescription(false);
+  }, [workflow, editingDescriptionValue, dispatch]);
 
   // Handle explicit save button click
   const handleSave = useCallback(() => {
@@ -324,7 +350,37 @@ export default function WorkflowEditor() {
                   )}
                 </div>
               )}
-              <p className="text-sm text-gray-500">{displayDescription}</p>
+              {isEditingDescription ? (
+                <div className="flex items-center gap-2">
+                  <input
+                    ref={descriptionInputRef}
+                    type="text"
+                    value={editingDescriptionValue}
+                    onChange={(e) => setEditingDescriptionValue(e.target.value)}
+                    onBlur={handleDescriptionSave}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleDescriptionSave();
+                      if (e.key === 'Escape') setIsEditingDescription(false);
+                    }}
+                    placeholder="Add workflow description..."
+                    className="text-sm text-gray-500 bg-white px-2 py-0.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 min-w-[300px]"
+                  />
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <p className="text-sm text-gray-500">
+                    {displayDescription || 'No description'}
+                  </p>
+                  {workflow && (
+                    <button
+                      onClick={startEditingDescription}
+                      className="p-0.5 hover:bg-gray-200 rounded text-gray-400 hover:text-gray-600"
+                    >
+                      <Pencil size={12} />
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
@@ -412,7 +468,8 @@ export default function WorkflowEditor() {
         <div className="flex-1" />
         <button
           onClick={deleteSelected}
-          className="px-4 py-1.5 bg-red-500 text-white rounded-md text-sm hover:bg-red-600"
+          disabled={!nodes.some((n) => n.selected) && !edges.some((e) => e.selected)}
+          className="px-4 py-1.5 bg-red-500 text-white rounded-md text-sm hover:bg-red-600 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:text-gray-500"
         >
           Delete Selected
         </button>

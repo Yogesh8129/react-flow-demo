@@ -15,7 +15,7 @@ interface SmsActionNodeProps {
 }
 
 function SmsActionNode({ data }: SmsActionNodeProps) {
-  const { recipients = [], template_id = '' } = data;
+  const { recipients = [] } = data;
 
   return (
     <BaseNode
@@ -34,26 +34,19 @@ function SmsActionNode({ data }: SmsActionNodeProps) {
 
       <BaseNodeContent>
         {recipients.length > 0 ? (
-          <div className="space-y-2">
-            <div className="flex flex-wrap gap-1">
-              {recipients.slice(0, 2).map((phone, index) => (
-                <span
-                  key={index}
-                  className="px-2 py-0.5 bg-violet-100 text-violet-700 text-xs rounded"
-                >
-                  {phone}
-                </span>
-              ))}
-              {recipients.length > 2 && (
-                <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded">
-                  +{recipients.length - 2} more
-                </span>
-              )}
-            </div>
-            {template_id && (
-              <p className="text-xs text-gray-500">
-                Template: <span className="font-mono">{template_id}</span>
-              </p>
+          <div className="flex flex-wrap gap-1">
+            {recipients.slice(0, 2).map((phone, index) => (
+              <span
+                key={index}
+                className="px-2 py-0.5 bg-violet-100 text-violet-700 text-xs rounded"
+              >
+                {phone}
+              </span>
+            ))}
+            {recipients.length > 2 && (
+              <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded">
+                +{recipients.length - 2} more
+              </span>
             )}
           </div>
         ) : (
