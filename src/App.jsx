@@ -1,135 +1,38 @@
-import React, { useState, useCallback } from "react";
-import ReactFlow, { Background, Controls, useNodesState, useEdgesState, addEdge } from "reactflow";
-import "reactflow/dist/style.css";
-import "./App.css";
+import { Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
+import Dashboard from "./pages/Dashboard";
+import WorkflowEditor from "./pages/WorkflowEditor";
 
-const initialNodes = [
-  { id: "1", position: { x: 0, y: 0 }, data: { label: "Start" } },
-  { id: "2", position: { x: 200, y: 100 }, data: { label: "Process" } },
-  { id: "3", position: { x: 400, y: 0 }, data: { label: "End" } },
-];
-
-const initialEdges = [
-  { id: "e1-2", source: "1", target: "2", animated: true },
-  { id: "e2-3", source: "2", target: "3" },
-];
-
-export default function FlowDemo() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-
-  
-  const [nodeName, setNodeName] = useState("");
-  const [selectedNode, setSelectedNode] = useState(null);
-  const [updateLabel, setUpdateLabel] = useState("");
-
-  const onConnect = useCallback(
-    (connection) => setEdges((eds) => addEdge(connection, eds)),
-    [setEdges]
-  );
-
-  // CREATE: Add a new node
-  const addNode = useCallback(() => {
-    if (!nodeName.trim()) return;
-    const newNode = {
-      id: `node-${Date.now()}`,
-      position: { x: Math.random() * 300, y: Math.random() * 300 },
-      data: { label: nodeName },
-    };
-    setNodes((nds) => [...nds, newNode]);
-    setNodeName("");
-  }, [nodeName, setNodes]);
-
-  // UPDATE: Update selected node's label
-  const updateNodeLabel = useCallback(() => {
-    if (!selectedNode || !updateLabel.trim()) return;
-    setNodes((nds) =>
-      nds.map((node) =>
-        node.id === selectedNode.id
-          ? { ...node, data: { ...node.data, label: updateLabel } }
-          : node
-      )
-    );
-    setUpdateLabel("");
-    setSelectedNode(null);
-  }, [selectedNode, updateLabel, setNodes]);
-
-  // DELETE: Remove selected nodes and edges
-  const deleteSelected = useCallback(() => {
-    setNodes((nds) => nds.filter((node) => !node.selected));
-    setEdges((eds) => eds.filter((edge) => !edge.selected));
-    setSelectedNode(null);
-  }, [setNodes, setEdges]);
-
-  // Event: When a node is clicked
-  const onNodeClick = useCallback((event, node) => {
-    setSelectedNode(node);
-    setUpdateLabel(node.data.label);
-  }, []);
-
-  // Event: When clicking on empty canvas
-  const onPaneClick = useCallback(() => {
-    setSelectedNode(null);
-    setUpdateLabel("");
-  }, []);
-
+export default function App() {
   return (
-    <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
-      {/* Control Panel */}
-      <div className="control-panel">
-        {/* CREATE: Add Node */}
-        <div className="section">
-          <input
-            type="text"
-            value={nodeName}
-            onChange={(e) => setNodeName(e.target.value)}
-            placeholder="Node label"
-            className="input"
-          />
-          <button onClick={addNode} className="button">
-            Add Node
-          </button>
-        </div>
+    <>
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/workflow/new" element={<WorkflowEditor />} />
+        <Route path="/workflow/:id" element={<WorkflowEditor />} />
+      </Routes>
 
-        {/* DELETE: Remove Selected */}
-        <button onClick={deleteSelected} className="delete-button">
-          Delete Selected
-        </button>
-
-        {/* UPDATE: Edit Selected Node */}
-        {selectedNode && (
-          <div className="section">
-            <span className="label">Editing: {selectedNode.data.label}</span>
-            <input
-              type="text"
-              value={updateLabel}
-              onChange={(e) => setUpdateLabel(e.target.value)}
-              placeholder="New label"
-              className="input"
-            />
-            <button onClick={updateNodeLabel} className="button">
-              Update
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* React Flow Canvas */}
-      <div className="flow-container">
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          onNodeClick={onNodeClick}
-          onPaneClick={onPaneClick}
-          fitView
-        >
-          <Controls />
-          <Background gap={32} />
-        </ReactFlow>
-      </div>
-    </div>
+      {/* Toast notifications */}
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: "#363636",
+            color: "#fff",
+          },
+          success: {
+            style: {
+              background: "#10b981",
+            },
+          },
+          error: {
+            style: {
+              background: "#ef4444",
+            },
+          },
+        }}
+      />
+    </>
   );
 }
